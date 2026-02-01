@@ -185,12 +185,12 @@ mapData.mapElements = {
   ["RIFT.MINOR.ACTIVE.EARTH"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftDeath.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
   ["RIFT.MINOR.ACTIVE.DEATH"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftEarth.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
 
-  ["RIFT.MINOR.UNSTABLE.FIRE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftFire.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  ["RIFT.MINOR.UNSTABLE.WATER"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftWater.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  ["RIFT.MINOR.UNSTABLE.LIFE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftLife.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  ["RIFT.MINOR.UNSTABLE.AIR"]       = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftAir.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  ["RIFT.MINOR.UNSTABLE.EARTH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftEarth.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  ["RIFT.MINOR.UNSTABLE.DEATH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftDeath.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MINOR.UNSTABLE.FIRE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftFire.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MINOR.UNSTABLE.WATER"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftWater.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MINOR.UNSTABLE.LIFE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftLife.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MINOR.UNSTABLE.AIR"]       = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftAir.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MINOR.UNSTABLE.EARTH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftEarth.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MINOR.UNSTABLE.DEATH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftDeath.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   
   ["RIFT.MINOR.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.MINOR.ACTIVE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/riftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
