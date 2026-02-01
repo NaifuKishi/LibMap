@@ -21,6 +21,7 @@ RunOnStartup = {
   "fx/fx.lua",
 
   "map/data.lua",
+  "map/mapElements.lua",
   "map/location.lua",
   "map/map.lua",
   "map/zone.lua",
