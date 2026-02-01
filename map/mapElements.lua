@@ -105,7 +105,7 @@ mapData.mapElements = {
   ["VARIA.PLANEVOUCHERS"]   = { path = "indicator_merchant.png.dds", width = SIZE_CITY, height = SIZE_CITY, layer = LAYER_NPC },
 
   ["VARIA.NPC"]             = { path = "MainMap_I337.dds", width = SIZE_NPC, height = SIZE_NPC, layer = LAYER_NPC },
-  ["VARIA.NPC.HOSTILE"]     = { path = "MiniMap_I315.dds", width = SIZE_NPC, height = SISIZE_NPCZE_CITY, layer = LAYER_NPC },
+  ["VARIA.NPC.HOSTILE"]     = { path = "MiniMap_I315.dds", width = SIZE_NPC, height = SIZE_NPC, layer = LAYER_NPC },
   ["VARIA.NPC.FRIENDLY"]    = { path = "MiniMap_I342.dds", width = SIZE_NPC, height = SIZE_NPC, layer = LAYER_NPC },
   ["VARIA.NPC.NEUTRAL"]     = { path = "MiniMap_I347.dds", width = SIZE_NPC, height = SIZE_NPC, layer = LAYER_NPC },
   
