@@ -36,7 +36,7 @@ local stringGSub		= string.gsub
 local _mapPoints = {}
 local _wayPoints = {}
 local _mapUnits = {}
---local _lastUpdate = nil
+local _lastUpdate = nil
 local _mapColossus = nil
 local _mapNPC = {}
 local _mapEvents = false
@@ -97,46 +97,75 @@ local function _fctCheckForNPC (values)
 
 end
 
-local function _fctCheckPattern (value)
+-- Cache für bereits geprüfte Werte (weak keys, um Speicherlecks zu vermeiden)
+local _patternCache = setmetatable({}, { __mode = "k" })
 
-	local checkValue = stringGSub(value, "\n", "")
+local function _fctCheckPattern(value)
+  local checkValue = stringGSub(value, "\n", "")
 
-	for idx = 1, #lang.mapIdentifiers, 1 do
+  -- **1. Cache-Check: Falls der Wert bereits geprüft wurde, Ergebnis zurückgeben**
+  if _patternCache[checkValue] then
+    return table.unpack(_patternCache[checkValue])
+  end
 
-		local details = lang.mapIdentifiers[idx]
-		local pattern = details.pattern
+  -- **2. Original-Logik, aber mit Ergebnis-Caching**
+  for idx = 1, #lang.mapIdentifiers, 1 do
+    local details = lang.mapIdentifiers[idx]
+    local pattern = details.pattern
 
-		if details.regExCompute ~= nil then
-			local value1, _ = stringMatch(checkValue, pattern)			
-			if value1 ~= nil then return idx, details, details.type end             
-		elseif details.regExValues ~= nil then
-			local subValue = stringMatch(checkValue, pattern)
-			
-			if subValue ~= nil then
-				for k, v in pairs(details.regExValues) do
-					if stringMatch(subValue, k) then return idx, details, details.type .. "." .. v end
-				end
+    if details.regExCompute ~= nil then
+      local value1, _ = stringMatch(checkValue, pattern)
+      if value1 ~= nil then
+        local result = {idx, details, details.type}
+        _patternCache[checkValue] = result  -- **Cache speichern**
+        return table.unpack(result)
+      end
+    elseif details.regExValues ~= nil then
+      local subValue = stringMatch(checkValue, pattern)
+      if subValue ~= nil then
+        for k, v in pairs(details.regExValues) do
+          if stringMatch(subValue, k) then
+            local result = {idx, details, details.type .. "." .. v}
+            _patternCache[checkValue] = result  -- **Cache speichern**
+            return table.unpack(result)
+          end
+        end
+      end
+    elseif details.exact == false then
+      if stringFind(checkValue, pattern) ~= nil then
+        local result = {idx, details, details.type}
+        _patternCache[checkValue] = result  -- **Cache speichern**
+        return table.unpack(result)
+      end
+    else
+      if stringFind(checkValue, pattern, 1, true) ~= nil then
+        local result = {idx, details, details.type}
+        _patternCache[checkValue] = result  -- **Cache speichern**
+        return table.unpack(result)
+      end
+    end
+  end
 
-				--LibEKL.Tools.Error.Display ("LibMap", subValue .. " not found in " .. LibEKL.Tools.Table.Serialize(details.regExValues), 2)
+  -- **3. Fallbacks (Vendors, Factions) ebenfalls cachen**
+  for idx = 1, #lang.mapIdentifiersVendors, 1 do
+    if stringFind(checkValue, lang.mapIdentifiersVendors[idx]) ~= nil then
+      local result = {9999, lang.mapIdentifiersGeneric["VENDORGENERIC"], "VENDOR.OTHER"}
+      _patternCache[checkValue] = result
+      return table.unpack(result)
+    end
+  end
 
-			end          
-		elseif details.exact == false then
-			if stringFind(checkValue, pattern) ~= nil then return idx, details, details.type end 
-		else
-			if stringFind(checkValue, pattern, 1, true) ~= nil then return idx, details, details.type end
-		end
-	end
+  for k, v in pairs(lang.factionNames) do
+    if stringFind(checkValue, v) ~= nil then
+      local result = {9999, lang.mapIdentifiersGeneric["FACTION"], "VARIA.NPC"}
+      _patternCache[checkValue] = result
+      return table.unpack(result)
+    end
+  end
 
-	for idx = 1, #lang.mapIdentifiersVendors, 1 do
-		if stringFind(checkValue, lang.mapIdentifiersVendors[idx]) ~= nil then return 9999, lang.mapIdentifiersGeneric["VENDORGENERIC"], "VENDOR.OTHER" end
-	end
-
-	for k, v in pairs (lang.factionNames) do
-		if stringFind(checkValue, v) ~= nil then return 9999, lang.mapIdentifiersGeneric["FACTION"], "VARIA.NPC" end
-	end
-
-	return 0
-
+  -- **4. Cache für "nicht gefunden"**
+  _patternCache[checkValue] = {0}
+  return 0
 end
 
 local function _fctGetSubValue (values, pattern)
@@ -540,13 +569,15 @@ function internal.processMap()
 	local debugId  
 	if nkDebug then debugId = nkDebug.traceStart (InspectAddonCurrent(), "LibMap internal.processMap") end
 
+	local curTime = InspectTimeReal()
+	if not _lastUpdate or curTime - _lastUpdate < 0.1 then return end
+  	_lastUpdate = curTime
+
 	if _mapEvents == false then return end
 
 	if data.playerDetails ~= nil and _wayPoints[data.playerDetails.id] ~= nil then
 		internal.MapEventWaypoint (_, {[data.playerDetails.id] = true})
 	end
-
-	local curTime = InspectTimeReal()
 
 	local list = InspectMapList()
 
