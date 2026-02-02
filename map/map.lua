@@ -393,21 +393,30 @@ local function _fctMapEventUnitCoordChange (_, x, y, z)
 
   local addUnit, changeUnit = {}, {}
   local hasAdd, hasChange = false, false
+  local MIN_MOVEMENT = 0.1  -- Mindestbewegung in Metern
   
-  for unit, _ in pairs(x) do
-    if _mapUnits[unit] == nil then
-      addUnit[unit] = {id = unit, type = "UNKNOWN", coordX = x[unit], coordY = y[unit], coordZ = z[unit]}
-      _mapUnits[unit] = addUnit[unit]
-	  _mapUnits[unit].lastUpdate = InspectTimeReal()
+  local thisUpdateTime = InspectTimeReal()
+
+  for unit, newX in pairs(x) do
+    local thisUnit = _mapUnits[unit]
+
+    if thisUnit == nil then
+      addUnit[unit] = {id = unit, type = "UNKNOWN", coordX = newX, coordY = y[unit], coordZ = z[unit]}
+      thisUnit = addUnit[unit]
+	    thisUnit.lastUpdate = thisUpdateTime
       hasAdd = true
     else
-      if stringFind(_mapUnits[unit].type, "group..%.target") == nil then
-        changeUnit[unit] = {id = unit, type = _mapUnits[unit].type, coordX = x[unit], coordY = y[unit], coordZ = z[unit]}
-        _mapUnits[unit].coordX = x[unit]
-        _mapUnits[unit].coordY = y[unit]
-        _mapUnits[unit].coordZ = z[unit]
-		_mapUnits[unit].lastUpdate = InspectTimeReal()
-        hasChange = true
+      if stringFind(thisUnit.type, "group..%.target") == nil then
+        local dx = math.abs(_mapUnits[unit].coordX - newX)
+        local dy = math.abs(_mapUnits[unit].coordY - y[unit])
+        if dx > MIN_MOVEMENT or dy > MIN_MOVEMENT then
+          changeUnit[unit] = {id = unit, type = thisUnit.type, coordX = newX, coordY = y[unit], coordZ = z[unit]}
+          thisUnit.coordX = newX
+          thisUnit.coordY = y[unit]
+          thisUnit.coordZ = z[unit]
+          thisUnit.lastUpdate = thisUpdateTime
+          hasChange = true
+        end
       end
     end
   end
