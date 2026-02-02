@@ -321,61 +321,47 @@ local function _fctMapEventRemove (_, info)
 
 end
 
-local function _fctMapEventChange (_, info)
-
-  local addList, newlyAdded, counter = {}, 0, 0
-
-  for k, v in pairs (info) do
-    counter = counter + 1
-    if _mapPoints[k] == nil then
-      addList[k] = v
-      newlyAdded = newlyAdded+1
-    end    
-  end
-  
-  if newlyAdded > 0 then
-    internal.mapEvent.add(_, addList)
-    
-    if newlyAdded == counter then return end
-    for k, v in pairs(addList) do info[k] = nil end    
-  end
-  
+local function _fctMapEventChange(_, info)
+	
   local thisMapData = InspectMapDetail(info)
-  
-  local changeList, removeList = {}, {}
-  local descTitleChange, hasChange = false, false
-  addList = {}
-  
+  local addList, changeList, removeList = {}, {}, {}
+  local hasAdds, hasChanges, descTitleChange = false, false, false
+
   for key, values in pairs(thisMapData) do
-    local point = _mapPoints[key]
-    if values.description ~= point.description or values.title ~= point.title then
+    if _mapPoints[key] == nil then
+      -- Neue Map-Punkte
       local identifiedValues = _fctIdentify(values)
-      _mapPoints[key] = identifiedValues
-      
-      removeList[key] = true
       addList[key] = identifiedValues
-      descTitleChange = true
+      _mapPoints[key] = identifiedValues
+      hasAdds = true
     else
-      _mapPoints[key].coordX = thisMapData.coordX
-      _mapPoints[key].coordY = thisMapData.coordY
-      _mapPoints[key].coordZ = thisMapData.coordZ
-            
-      changeList[key] = _mapPoints[key]
-      
-      hasChange = true      
+      -- Bestehende Map-Punkte prüfen
+      local point = _mapPoints[key]
+      if values.description ~= point.description or values.title ~= point.title then
+        local identifiedValues = _fctIdentify(values)
+        _mapPoints[key] = identifiedValues
+        removeList[key] = true
+        addList[key] = identifiedValues
+        descTitleChange = true
+      else
+        -- Nur Koordinaten aktualisieren (kein volles Re-Identify nötig)
+        _mapPoints[key].coordX = values.coordX
+        _mapPoints[key].coordY = values.coordY
+        _mapPoints[key].coordZ = values.coordZ
+        changeList[key] = _mapPoints[key]
+        hasChanges = true
+      end
     end
   end
-  
-  if descTitleChange == true then
-    _fctMapEventRemove (_, removeList)
+
+  if descTitleChange then
+    _fctMapEventRemove(_, removeList)
     LibMap.eventHandlers["LibMap.map"]["add"](addList)
   end
-  
-  if hasChange == true then
-    LibMap.eventHandlers["LibMap.map"]["change"](changeList)
-  end
-
+  if hasChanges then LibMap.eventHandlers["LibMap.map"]["change"](changeList) end
+  if hasAdds then LibMap.eventHandlers["LibMap.map"]["add"](addList) end
 end
+
 
 local function _fctMapEventCoord  (_, x, y, z)
 
