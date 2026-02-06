@@ -267,7 +267,7 @@ local function _fctIdentify(values)
 				if  #mapIdentifier.regExCompute >= 1 then values[mapIdentifier.regExCompute[1]] = value1 end
 				if  #mapIdentifier.regExCompute >= 2 then values[mapIdentifier.regExCompute[2]] = value2 end
 				if  #mapIdentifier.regExCompute >= 3 then values[mapIdentifier.regExCompute[3]] = value3 end
-			break
+			  break
 			end
 		end
 	end
@@ -393,7 +393,7 @@ local function _fctMapEventUnitCoordChange (_, x, y, z)
 
   local addUnit, changeUnit = {}, {}
   local hasAdd, hasChange = false, false
-  local MIN_MOVEMENT = 0.1  -- Mindestbewegung in Metern
+  local MIN_MOVEMENT_SQUARED = 0.01  -- 0.1^2
   
   local thisUpdateTime = InspectTimeReal()
 
@@ -409,7 +409,7 @@ local function _fctMapEventUnitCoordChange (_, x, y, z)
       if stringFind(thisUnit.type, "group..%.target") == nil then
         local dx = math.abs(_mapUnits[unit].coordX - newX)
         local dy = math.abs(_mapUnits[unit].coordY - y[unit])
-        if dx > MIN_MOVEMENT or dy > MIN_MOVEMENT then
+         if dx*dx + dy*dy > MIN_MOVEMENT_SQUARED then
           changeUnit[unit] = {id = unit, type = thisUnit.type, coordX = newX, coordY = y[unit], coordZ = z[unit]}
           thisUnit.coordX = newX
           thisUnit.coordY = y[unit]
@@ -576,29 +576,26 @@ function internal.processMap()
 
 	local list = InspectMapList()
 
-	local hasAdds, hasRemoves = false, false
 	local addList, removeList = {}, {}
 
 	for key, v in pairs(list) do
-		if _mapPoints[key] == nil then
+		if not _mapPoints[key] then
 			addList[key] = v
-			hasAdds = true
 		end
 	end
 
 	for k, v in pairs(_mapPoints) do
-		if list[k] == nil then
+		if not list[k] then
 			removeList[k] = v
-			hasRemoves = true
 		end
 	end
 
-	if hasRemoves then _fctMapEventRemove (_, removeList) end
-	if hasAdds then internal.mapEvent.add (_, addList) end
+	if next (removeList) then _fctMapEventRemove (_, removeList) end
+	if next (addList) then internal.mapEvent.add (_, addList) end
 
 	for k, v in pairs(_mapUnits) do
 		if curTime - v.lastUpdate > 1 and stringFind(v.type, "UNIT.PLAYER") == nil then
-			local details = InspectUnitDetail(k)
+			local details = LibEKL.Unit.GetUnitDetails(k)
 			if details ~= nil then
 				_fctMapEventUnitCoordChange(_, {[k] = details.coordX}, {[k] = details.coordY}, {[k] = details.coordZ} )
 			end
