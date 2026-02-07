@@ -1,33 +1,37 @@
--- ElementManager für LibMap
--- Verwaltet die Wiederverwendung von UI-Elementen, um Performance zu optimieren
+local addonInfo, privateVars = ...
 
-local ElementManager = {}
-local elementPool = {}
+local elementManager 	= privateVars.elementManager
+
+local elementPool = {
+    ["nkMapElementCanvas"] = {},
+    ["nkMapElementTexture"] = {}
+}
 
 -- Fügt ein Element dem Pool hinzu
-function ElementManager.ReturnElement(element)
-    if element and element.GetType and element.SetVisible then
-        element:SetVisible(false)
-        table.insert(elementPool, element)
-    end
+function elementManager.ReturnElement(elementType, element)
+
+    element:SetVisible(false)
+    table.insert(elementPool[elementType], element)
+
 end
 
 -- Holt ein Element aus dem Pool oder erstellt ein neues
-function ElementManager.GetElement(elementType, elementName, parent, elementClass)
-    -- Suche nach einem passenden Element im Pool
-    for i, element in ipairs(elementPool) do
-        if element.GetType and element:GetType() == elementType then
-            table.remove(elementPool, i)
-            element:Reset(elementName, parent)
-            return element
-        end
+function elementManager.GetElement(elementType, elementName, parent)
+
+    if next(elementPool[elementType]) then
+        local element = table.remove(elementPool[elementType])
+        --element:Reset(elementName, parent)
+        return element
     end
+
     -- Falls kein passendes Element im Pool, erstelle ein neues
-    return LibMap.uiCreateFrame(elementClass, elementName, parent)
+    return LibMap.uiCreateFrame(elementType, elementName, parent)
+
 end
 
 -- Setzt ein Element zurück, um es wiederverwendbar zu machen
-function ElementManager.ResetElement(element, elementName, parent)
+function elementManager.ResetElement(element, elementName, parent)
+
     element:SetId(elementName)
     element:SetParent(parent)
     element:SetVisible(true)
@@ -35,18 +39,6 @@ function ElementManager.ResetElement(element, elementName, parent)
 end
 
 -- Gibt die aktuelle Größe des Pools zurück (für Debugging)
-function ElementManager.GetPoolSize()
+function elementManager.GetPoolSize()
     return #elementPool
 end
-
--- Leert den Pool (z.B. beim Beenden des Addons)
-function ElementManager.ClearPool()
-    for _, element in ipairs(elementPool) do
-        if element.destroy then
-            element:destroy()
-        end
-    end
-    elementPool = {}
-end
-
-return ElementManager

@@ -177,6 +177,7 @@ local function _uiMapElementTexture(name, parent)
   function mapElement:SetSmoothCoords (flag) smoothCoords = flag end
   function mapElement:GetCoord() return coordX, coordY end
   function mapElement:GetTooltip() return tooltip end
+  function mapElement:GetType() return "nkMapElementTexture" end
   
   function mapElement:SetDuplicate(flag) duplicate = flag end
   function mapElement:GetDuplicate() return duplicate end

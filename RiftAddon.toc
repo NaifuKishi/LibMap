@@ -29,6 +29,7 @@ RunOnStartup = {
   "ui/ui.lua",  
   
   "ui/map/map.lua",
+  "ui/map/elementManager.lua",
   "ui/map/elementTexture.lua",
   "ui/map/elementCanvas.lua",
   

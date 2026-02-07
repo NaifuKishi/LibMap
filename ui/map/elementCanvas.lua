@@ -287,6 +287,7 @@ local function _uiMapElementCanvas(name, parent)
 	function mapElement:GetRadius() return radius end
 	function mapElement:SetDuplicate(flag) duplicate = flag end
 	function mapElement:GetDuplicate() return duplicate end
+	function mapElement:GetType() return "nkMapElementCanvas" end
 
 	function mapElement:SetRadius(newRadius) 
 
