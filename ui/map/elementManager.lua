@@ -11,7 +11,6 @@ local elementPool = {
 function elementManager.ReturnElement(elementType, element)
 
     element:SetVisible(false)
-    element:destroy()
     table.insert(elementPool[elementType], element)
 
 end

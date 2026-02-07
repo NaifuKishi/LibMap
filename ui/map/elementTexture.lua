@@ -44,10 +44,6 @@ local function _uiMapElementTexture(name, parent)
   mapElement:SetLayer(2)
   mapElement:SetVisible(false)
   
-  function mapElement:destroy()
-
-  end
-
   function mapElement:SetClickCallBack(newCallBack)
   
     if clickCallBack ~= nil then

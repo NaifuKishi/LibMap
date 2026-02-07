@@ -47,17 +47,6 @@ local function _uiMapElementCanvas(name, parent)
 	mapElement:SetLayer(2)
 	mapElement:SetVisible(false)
 
-	--local oDestroy = mapElement.destroy
-
-	function mapElement:destroy()
-		if effectName ~= nil then
-			LibMap.fx.cancel(effectName)
-			effectName = nil
-		end    
-
-		--oDestroy()
-	end
-
 	function mapElement:SetParentMap(newParentMap) parentMap = newParentMap end
 
 	function mapElement:SetType(newElementType)

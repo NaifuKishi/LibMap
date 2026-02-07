@@ -628,7 +628,6 @@ local function _uiMap(name, parent)
 		if thisElement:GetTooltip() == true then tooltip:SetVisible(false) end
 
 		elementManager.ReturnElement(thisElement:GetType(), thisElement)
-		--thisElement:destroy()
 		elements[removeElement] = nil
 
 		if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:RemoveElement", debugId) end
