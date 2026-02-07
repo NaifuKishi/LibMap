@@ -595,7 +595,7 @@ function internal.processMap()
 
 	for k, v in pairs(_mapUnits) do
 		if curTime - v.lastUpdate > 1 and stringFind(v.type, "UNIT.PLAYER") == nil then
-			local details = LibEKL.Unit.GetUnitDetails(k)
+			local details = LibEKL.Unit.GetUnitDetail(k)
 			if details ~= nil then
 				_fctMapEventUnitCoordChange(_, {[k] = details.coordX}, {[k] = details.coordY}, {[k] = details.coordZ} )
 			end
