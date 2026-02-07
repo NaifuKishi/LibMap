@@ -488,17 +488,19 @@ local function _uiMap(name, parent)
 		local mapInfo = mapData.mapElements[newElement.type]
 		
 		if mapInfo.anim ~= nil then
+			
 			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     mapInfo.anim") end
-			--thisElement = LibMap.uiCreateFrame("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
 			thisElement = elementManager.GetElement("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
+
 		elseif mapInfo.gfxType == nil or stringLower(mapInfo.gfxType) == 'texture' then
+
 			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     texture") end
-			--thisElement = LibMap.uiCreateFrame("nkMapElementTexture", newElement.type .. "." .. LibMapUUID(), mask)
 			thisElement = elementManager.GetElement("nkMapElementTexture", newElement.type .. "." .. LibMapUUID(), mask)
 			if mapInfo.layer ~= nil then thisElement:SetLayer(mapInfo.layer) end
+
 		elseif stringLower(mapInfo.gfxType) == "canvas" then
+
 			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     canvas") end
-			--thisElement = LibMap.uiCreateFrame("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
 			thisElement = elementManager.GetElement("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
 		end
 

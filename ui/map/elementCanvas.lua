@@ -47,7 +47,7 @@ local function _uiMapElementCanvas(name, parent)
 	mapElement:SetLayer(2)
 	mapElement:SetVisible(false)
 
-	local oDestroy = mapElement.destroy
+	--local oDestroy = mapElement.destroy
 
 	function mapElement:destroy()
 		if effectName ~= nil then
@@ -55,7 +55,7 @@ local function _uiMapElementCanvas(name, parent)
 			effectName = nil
 		end    
 
-		oDestroy()
+		--oDestroy()
 	end
 
 	function mapElement:SetParentMap(newParentMap) parentMap = newParentMap end
