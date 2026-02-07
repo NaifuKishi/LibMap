@@ -3,7 +3,6 @@ local addonInfo, privateVars = ...
 ---------- init namespace ---------
 
 if not LibMap then LibMap = {} end
-
 if not privateVars.uiFunctions then privateVars.uiFunctions = {} end
 
 local uiFunctions   = privateVars.uiFunctions
@@ -24,13 +23,16 @@ local mathMax				= math.max
 
 local LibMapUUID				= LibEKL.Tools.UUID
 
+-- Laden des ElementManagers
+local ElementManager = require("ui.map.elementManager")
+
 ---------- addon internal function block ---------
 
 local function _uiMap(name, parent)
 
-	if LibMap.internal.checkEvents (name, true) == false then return nil end 
+	if LibMap.internal.checkEvents (name, true) == false then return nil end
 
-	---------- VARIABLES ---------- 
+	---------- VARIABLES ----------
 
 	local activeMap = nil;
 	local activeType = nil;
@@ -93,7 +95,7 @@ local function _uiMap(name, parent)
 	local coordLabel = LibEKL.UICreateFrame("nkText", name .. ".coordLabel", ui:GetHeader())
 	coordLabel:SetFontSize(12)
 	coordLabel:SetFontColor(1, 1, 1, 1)
-	coordLabel:SetPoint("CENTER", ui:GetHeader(), "CENTER") 
+	coordLabel:SetPoint("CENTER", ui:GetHeader(), "CENTER")
 	coordLabel:SetLayer(3)
 
 	LibMap.ui.setFont(coordLabel, addonInfo.id, "MontserratSemiBold")
@@ -122,19 +124,18 @@ local function _uiMap(name, parent)
 		oMapSetHeight(self, height)
 	end
 
-
 	local tooltip = LibMap.uiCreateFrame("nkTooltip", name .. ".tooltip", ui)
 	tooltip:SetVisible(false)
-	tooltip:SetLayer(999)	
+	tooltip:SetLayer(999)
 	tooltip:SetFont (addonInfo.id, "MontserratSemiBold")
 
 	---------- LOCAL METHODS ----------
 
 	local function _fctRedraw ()
 
-		local debugId  
-		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:Redraw") end    
-		
+		local debugId
+		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:Redraw") end
+
 		local currentScale = maximized and maximizedScale or scale
     	local originalScale = currentScale
 
@@ -150,7 +151,7 @@ local function _uiMap(name, parent)
 		map:SetWidth(mapInfoWidth * currentScale)
 		map:SetHeight(mapInfoHeight * currentScale)
 
-		if x == nil and y == nil then	
+		if x == nil and y == nil then
 			ui:SetCoord((mapInfo.x2 - mapInfo.x1)/2, (mapInfo.y2 - mapInfo.y1)/2)
 		else
 			ui:SetCoord()
@@ -158,7 +159,7 @@ local function _uiMap(name, parent)
 
 		for key, thisElement in pairs (elements) do
 			thisElement:SetZoom(currentScale)
-			thisElement:SetCoord()			
+			thisElement:SetCoord()
 		end
 
 		if originalScale ~= currentScale then
@@ -174,26 +175,26 @@ local function _uiMap(name, parent)
 
 		if mapWidth >= maskWidth and mapHeight >= maskHeight then
 
-			local debugId  
+			local debugId
 			if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:ZoomOut") end
 
 			local thisScale = scale
 			if maximized == true then thisScale = maximizedScale end
 
 			if (thisScale - scaleStep >= 0) then
-				if maximized == true then 
+				if maximized == true then
 					maximizedScale = maximizedScale - scaleStep
 					thisScale = maximizedScale
 				else
 					scale = scale - scaleStep
 					thisScale = scale
-				end        
-				
+				end
+
 				_fctRedraw()
 				LibMap.eventHandlers[name]["Zoomed"](thisScale, maximized)
-			end 
+			end
 
-			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:ZoomOut", debugId) end     
+			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:ZoomOut", debugId) end
 		end
 	end
 
@@ -206,11 +207,11 @@ local function _uiMap(name, parent)
 		if maximized == true then thisScale = maximizedScale end
 
 		if thisScale < maxZoom then
-			if maximized == true then 
+			if maximized == true then
 				maximizedScale = maximizedScale + scaleStep
 			else
 				scale = scale + scaleStep
-			end    
+			end
 
 			_fctRedraw()
 			LibMap.eventHandlers[name]["Zoomed"](thisScale, maximized)
@@ -232,7 +233,7 @@ local function _uiMap(name, parent)
 		local yP = 1 / mapHeight * diffY
 
 		cursorCoordX = mathFloor(((mapInfo.x2 - mapInfo.x1) * xP) + mapInfo.x1)
-		cursorCoordY = mathFloor(((mapInfo.y2 - mapInfo.y1) * yP) + mapInfo.y1) 
+		cursorCoordY = mathFloor(((mapInfo.y2 - mapInfo.y1) * yP) + mapInfo.y1)
 
 		coordLabel:SetText(stringFormat("%d / %d", cursorCoordX, cursorCoordY))
 
@@ -245,7 +246,7 @@ local function _uiMap(name, parent)
 		if x == newX and y == newY then return end
 
 		x, y = newX, newY
-		
+
 		if x + mapWidth < maskWidth then
 			x = maskWidth - mapWidth
 		elseif x > 0 then x = 0 end
@@ -258,7 +259,7 @@ local function _uiMap(name, parent)
 
 	end
 
-	local function _fctProcessWayPoint () 
+	local function _fctProcessWayPoint ()
 
 		if waypoint ~= nil then
 
@@ -307,7 +308,7 @@ local function _uiMap(name, parent)
 
 			ui:SetWidth(maximizedWidth)
 			ui:SetHeight(maximizedHeight)
-			ui:SetPoint("TOPLEFT", UIParent, "TOPLEFT", maximizedX, maximizedY)      			
+			ui:SetPoint("TOPLEFT", UIParent, "TOPLEFT", maximizedX, maximizedY)
 		end
 
 		maskHeight = mask:GetHeight()
@@ -325,13 +326,13 @@ local function _uiMap(name, parent)
 		activeType = activeType
 		activeMap = mapName
 
-		mapInfo = LibMap.map.getMapData (mapName) 
+		mapInfo = LibMap.map.getMapData (mapName)
 
 		if mapInfo.width <= mapInfo.height then
 			scaleStep = 1 / mapInfo.width * maskWidth
 		else
 			scaleStep = 1 / mapInfo.height * maskHeight
-		end 
+		end
 
 		if scale == nil then scale = scaleStep end
 
@@ -379,7 +380,7 @@ local function _uiMap(name, parent)
 		if coordY < mapInfo.y1 then coordY = mapInfo.y1 end
 
 		coordLabel:SetText(stringFormat("%d / %d", coordX, coordY))
-		
+
 		local pX = 1 / (mapInfo.x2 - mapInfo.x1) * (coordX - mapInfo.x1)
 		local pY = 1 / (mapInfo.y2 - mapInfo.y1) * (coordY - mapInfo.y1)
 
@@ -392,15 +393,13 @@ local function _uiMap(name, parent)
 
 		_fctPosition(newX, newY)
 
-		--if x == mathFloor(newX) and y == mathFloor(newY) then return end -- only do computation of radius for significant x / y change
-
 		local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
 		local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
-		
+
 		coordsArea = {	x1 = mapInfo.x1 + ((mask:GetLeft() - map:GetLeft()) * xPixel),
 						y1 = mapInfo.y1 + ((mask:GetTop() - map:GetTop()) * yPixel) }
 		coordsArea.x2 = coordsArea.x1 + (maskWidth * xPixel)
-		coordsArea.y2 = coordsArea.y1 + (maskHeight * xPixel)
+		coordsArea.y2 = coordsArea.y1 + (maskHeight * yPixel)
 
 		for id, element in pairs(elements) do
 
@@ -411,19 +410,14 @@ local function _uiMap(name, parent)
 				local radius = 0
 				if element.GetRadius and element:GetRadius() ~= nil then radius = element:GetRadius() / 2 end
 
-				-- Check if the element's coordinates, considering its radius, are within the coordsArea
 				if eleX + radius >= coordsArea.x1 and eleX - radius <= coordsArea.x2 and eleZ + radius >= coordsArea.y1 and eleZ - radius <= coordsArea.y2 then
-					--if not element:GetDuplicate() then
-						element:SetVisible(true)
-					--else
-					--	element:SetVisible(false)
-					--end
+					element:SetVisible(true)
 				else
 					element:SetVisible(false)
 				end
 			end
 
-		end 
+		end
 
 	end
 
@@ -442,32 +436,27 @@ local function _uiMap(name, parent)
 
 	function ui:AddElement (newElement)
 
-		-- der check auf duplicates funktioniert ist aber nicht ideal. Er versteckt nur statt überhaupt nicht zu bauen. Immerhin ...
-		
-		local debugId 
+		local debugId
 		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:AddElement") end
 
 		if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", newElement.title, newElement) end
-				
+
 		if mapData.mapElements[newElement.type] == nil then
-			if nkDebug then print ("unknown map element type: " .. newElement.type) end 
+			if nkDebug then print ("unknown map element type: " .. newElement.type) end
 			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:AddElement", debugId) end
-			return 
+			return
 		end
 
 		local log = true
 
-		if elements[newElement.id] ~= nil then 
-			return 
+		if elements[newElement.id] ~= nil then
+			return
 		end
 
 		local duplicate = false
 
-		-- check if the exact same map identicator is found at exact the same position
-		-- this happens for example if you can return more than one quests to the same quest giver
-
 		local checkKey = tostring(newElement.coordX) .. tostring(newElement.coordY) .. tostring(newElement.coordZ) .. tostring(newElement.type)
-		
+
 		if checkIdentical[checkKey] ~= nil and #checkIdentical[checkKey] > 0 then
 			table.insert(checkIdentical[checkKey], newElement.id)
 			duplicate = true
@@ -484,45 +473,36 @@ local function _uiMap(name, parent)
 
 		local thisElement
 		local mapInfo = mapData.mapElements[newElement.type]
-		
-		if mapInfo.anim ~= nil then
-			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     mapInfo.anim") end
-			thisElement = LibMap.uiCreateFrame("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
-		elseif mapInfo.gfxType == nil or stringLower(mapInfo.gfxType) == 'texture' then
-			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     texture") end
-			thisElement = LibMap.uiCreateFrame("nkMapElementTexture", newElement.type .. "." .. LibMapUUID(), mask)
-			if mapInfo.layer ~= nil then thisElement:SetLayer(mapInfo.layer) end
+
+		-- Hole ein Element aus dem Pool oder erstelle ein neues
+		local elementClass = "nkMapElementCanvas"
+		if mapInfo.gfxType == nil or stringLower(mapInfo.gfxType) == 'texture' then
+			elementClass = "nkMapElementTexture"
 		elseif stringLower(mapInfo.gfxType) == "canvas" then
-			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     canvas") end
-			thisElement = LibMap.uiCreateFrame("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
+			elementClass = "nkMapElementCanvas"
 		end
 
+		thisElement = ElementManager.GetElement(newElement.type, newElement.type .. "." .. LibMapUUID(), mask, elementClass)
+
 		thisElement:SetId(newElement.id)
-		--thisElement:SetDuplicate(duplicate)
 
 		if thisElement.SetSmoothCoords ~= nil then
 			thisElement:SetSmoothCoords(newElement.smoothCoords or false)
-		end	
+		end
 
 		local thisScale = scale
 		if maximized == true then thisScale = maximizedScale end
 
-		--if nkDebug and log then			 
-		--	nkDebug.logEntry (addonInfo.identifier, "Scale", thisScale)
-		--end
-
-		thisElement:SetParentMap(ui)    
+		thisElement:SetParentMap(ui)
 
 		if newElement.radius ~= nil then thisElement:SetRadius(newElement.radius) end
 		thisElement:SetType(newElement.type)
-		
+
 		if newElement.type ~= "UNIT.PLAYER" then
 			thisElement:SetToolTip(newElement.title, newElement.descList)
 		end
 
-		if newElement.angle ~= nil and thisElement.SetAngle ~= nil then thisElement:SetAngle(newElement.angle) end    
-
-		--thisElement:SetZoom(thisScale, maximized)
+		if newElement.angle ~= nil and thisElement.SetAngle ~= nil then thisElement:SetAngle(newElement.angle) end
 
 		local thisY = newElement.coordY
 		if newElement.coordZ ~= nil then thisY = newElement.coordZ end
@@ -537,12 +517,11 @@ local function _uiMap(name, parent)
 			thisElement:SetCoord(newElement.coordX, thisY)
 		end
 
-		--if not duplicate then thisElement:SetVisible(true)  end
 		thisElement:SetVisible(true)
 
 		thisElement.title = newElement.title
 
-		if newElement.clickCallBack ~= nil and thisElement.SetClickCallBack ~= nil then		
+		if newElement.clickCallBack ~= nil and thisElement.SetClickCallBack ~= nil then
 			thisElement:SetClickCallBack (newElement.clickCallBack)
 		end
 
@@ -556,21 +535,21 @@ local function _uiMap(name, parent)
 
 	function ui:ChangeElement (updateElement)
 
-		local debugId  
+		local debugId
 		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:ChangeElement") end
 
-		if nkDebug then 
-			if elements[updateElement.id] == nil then 
-				nkDebug.logEntry (inspectAddonCurrent(), "_uiMap", "ui:ChangeElement error", "unknown element with id " .. updateElement.id)				
+		if nkDebug then
+			if elements[updateElement.id] == nil then
+				nkDebug.logEntry (inspectAddonCurrent(), "_uiMap", "ui:ChangeElement error", "unknown element with id " .. updateElement.id)
 			end
 		end
 
 		local thisElement = elements[updateElement.id]
-		
-		if thisElement == nil then 
+
+		if thisElement == nil then
 			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:ChangeElement", debugId) end
-			return false 
-		end -- potential overlap in shard hopping
+			return false
+		end
 
 		local thisY = updateElement.coordY
 		if updateElement.coordZ ~= nil then thisY = updateElement.coordZ end
@@ -599,7 +578,7 @@ local function _uiMap(name, parent)
 
 		if elements[removeElement] == nil then return end
 
-		local debugId  
+		local debugId
 		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:RemoveElement") end
 
 		local thisElement = elements[removeElement]
@@ -622,12 +601,13 @@ local function _uiMap(name, parent)
 
 				break
 			end
-		
+
 		end
 
 		if thisElement:GetTooltip() == true then tooltip:SetVisible(false) end
 
-		thisElement:destroy()
+		-- Füge das Element dem Pool hinzu, statt es zu zerstören
+		ElementManager.ReturnElement(thisElement)
 		elements[removeElement] = nil
 
 		if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:RemoveElement", debugId) end
@@ -635,29 +615,29 @@ local function _uiMap(name, parent)
 	end
 
 	function ui:GetScale()
-	
+
 		if maximized == true then
 			return maximizedScale, true
 		else
 			return scale, false
 		end
-		
+
 	end
 
 	function ui:UpdateMapInfo(newMapInfo)
-	
+
 		mapInfo = newMapInfo
 		_fctRedraw()
-		
+
 	end
 
 	function ui:SetAnimated(flag, speed)
-	
+
 		animated = flag
 		animationSpeed = speed or 0
 
 		for key, element in pairs(elements) do
-			if element.SetAnimated ~= nil then element:SetAnimated(flag, animationSpeed) end 
+			if element.SetAnimated ~= nil then element:SetAnimated(flag, animationSpeed) end
 		end
 
 	end
@@ -683,18 +663,18 @@ local function _uiMap(name, parent)
 		ui:DisplayHeader(flag)
 	end
 
-	---------- EVENTS ---------- 
+	---------- EVENTS ----------
 
 	Command.Event.Attach(LibEKL.Events[name .. '.window'].Moved, function (_, newX, newY)
-	
+
 		if maximized == true then
 			maximizedX, maximizedY = newX, newY
 		else
 			origX, origY = newX, newY
 		end
-		
+
 		LibMap.eventHandlers[name]["Moved"](newX, newY, maximized)
-		
+
 	end, name .. '.window.Moved')
 
 	Command.Event.Attach(LibEKL.Events[name .. '.window'].Resized, function (_, newWidth, newHeight)
@@ -711,7 +691,7 @@ local function _uiMap(name, parent)
 		end
 
 		LibMap.eventHandlers[name]["Resized"](newWidth, newHeight, maximized)
-		
+
 	end, name .. '.window.Resized')
 
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Wheel.Back, function () _fctZoomOut() end, ui:GetName() .. ".Mouse.Wheel.Back")
@@ -731,10 +711,9 @@ local function _uiMap(name, parent)
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Cursor.Move.Bubble, function (self, _, posX, posY)
 
 		if drag ~= true then
-			_fctUpdateCoord(posX, posY) 
-			--print ("hossa")
+			_fctUpdateCoord(posX, posY)
 			LibMap.eventHandlers[name]["MouseMoved"](coordLabel:GetText())
-			return 
+			return
 		end
 
 		local diffX, diffY = posX - mouseData.x, posY - mouseData.y
@@ -745,17 +724,17 @@ local function _uiMap(name, parent)
 		if diffX < 0 then
 			coordX = coordX + ((mapInfo.x2 - mapInfo.x1) * xP)
 		else
-			coordX = coordX - ((mapInfo.x2 - mapInfo.x1) * xP)       
+			coordX = coordX - ((mapInfo.x2 - mapInfo.x1) * xP)
 		end
 
 		if diffY < 0 then
 			coordY = coordY + ((mapInfo.y2 - mapInfo.y1) * yP)
 		else
-			coordY = coordY - ((mapInfo.y2 - mapInfo.y1) * yP)       
+			coordY = coordY - ((mapInfo.y2 - mapInfo.y1) * yP)
 		end
 
 		ui:SetCoord ()
-		mouseData = inspectMouse()		
+		mouseData = inspectMouse()
 
 	end, ui:GetName() .. ".Cursor.Move.Bubble")
 
@@ -763,18 +742,18 @@ local function _uiMap(name, parent)
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Left.Upoutside, function () drag = false end, ui:GetName()  .. ".Mouse.left.Upoutside")
 
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Right.Down.Bubble, function ()
-	
+
 		if allowWayPoints == false then return end
-		
+
 		_fctProcessWayPoint()
-		
-	end, ui:GetName() .. ".Mouse.Right.Down.Bubble")  
+
+	end, ui:GetName() .. ".Mouse.Right.Down.Bubble")
 
 	iconZoomIn:EventAttach(Event.UI.Input.Mouse.Left.Down, function () _fctZoomIn() end, iconZoomIn:GetName() .. ".iconZoomIn.Mouse.Left.Down")
 	iconZoomOut:EventAttach(Event.UI.Input.Mouse.Left.Down, function () _fctZoomOut() end, iconZoomOut:GetName() .. ".iconZoomOut.Mouse.Left.Down")
 	iconMinMax:EventAttach(Event.UI.Input.Mouse.Left.Down, function () ui:ToggleMinMax(true) end, iconMinMax:GetName() .. ".iconMinMax.Mouse.Left.Down")
 
-	---------- EVENT HANDLERS ---------- 
+	---------- EVENT HANDLERS ----------
 
 	LibMap.eventHandlers[name]["Moved"], LibMap.events[name]["Moved"] = Utility.Event.Create(addonInfo.identifier, name .. "Moved")
 	LibMap.eventHandlers[name]["MouseMoved"], LibMap.events[name]["MouseMoved"] = Utility.Event.Create(addonInfo.identifier, name .. "MouseMoved")
@@ -783,7 +762,7 @@ local function _uiMap(name, parent)
 	LibMap.eventHandlers[name]["Toggled"], LibMap.events[name]["Toggled"] = Utility.Event.Create(addonInfo.identifier, name .. "Toggled")
 
 	return ui
-	
+
 end
 
 uiFunctions.NKMAP = _uiMap
