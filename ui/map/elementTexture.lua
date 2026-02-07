@@ -61,9 +61,11 @@ local function _uiMapElementTexture(name, parent)
   function mapElement:SetParentMap(newParentMap) parentMap = newParentMap end
 
   function mapElement:SetType(newElementType)
+    
     elementType = newElementType
-  
+    
     thisMapData = mapData.mapElements[elementType]
+
     local addon = "Rift"
     if thisMapData.addon ~= nil then addon = thisMapData.addon end
     mapElement:SetTextureAsync (addon, thisMapData.path)   
