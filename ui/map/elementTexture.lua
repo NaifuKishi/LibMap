@@ -20,7 +20,7 @@ local inspectAddonCurrent = Inspect.Addon.Current
 
 local function _uiMapElementTexture(name, parent)
 
-  local thisMapData = nil
+  local thisData = nil
   local parentMap = nil
   local zoom = 1
   local tooltipTitle = nil
@@ -64,13 +64,13 @@ local function _uiMapElementTexture(name, parent)
     
     elementType = newElementType
     
-    thisMapData = mapData.mapElements[elementType]
+    thisData = mapData.mapElements[elementType]
 
     local addon = "Rift"
-    if thisMapData.addon ~= nil then addon = thisMapData.addon end
-    mapElement:SetTextureAsync (addon, thisMapData.path)   
+    if thisData.addon ~= nil then addon = thisData.addon end
+    mapElement:SetTextureAsync (addon, thisData.path)   
     
-    if thisMapData.layer ~= nil then mapElement:SetLayer(thisMapData.layer) end
+    if thisData.layer ~= nil then mapElement:SetLayer(thisData.layer) end
         
   end
 
@@ -153,19 +153,19 @@ local function _uiMapElementTexture(name, parent)
     
 	if newZoom == zoom then return end
 	
-    local factor = thisMapData.factor or 1
+    local factor = thisData.factor or 1
     
-    if thisMapData.minZoom ~= nil then 
-      if thisMapData.minZoom > newZoom then     
-        mapElement:SetHeight((thisMapData.width * factor) / thisMapData.minZoom * newZoom)
-        mapElement:SetWidth((thisMapData.height * factor) / thisMapData.minZoom * newZoom) 
+    if thisData.minZoom ~= nil then 
+      if thisData.minZoom > newZoom then     
+        mapElement:SetHeight((thisData.width * factor) / thisData.minZoom * newZoom)
+        mapElement:SetWidth((thisData.height * factor) / thisData.minZoom * newZoom) 
       else
-        mapElement:SetHeight(thisMapData.width * factor)
-        mapElement:SetWidth(thisMapData.height * factor)
+        mapElement:SetHeight(thisData.width * factor)
+        mapElement:SetWidth(thisData.height * factor)
       end
     else
-      mapElement:SetHeight((thisMapData.width * factor) / maxZoom * newZoom)
-      mapElement:SetWidth((thisMapData.height * factor) / maxZoom * newZoom)
+      mapElement:SetHeight((thisData.width * factor) / maxZoom * newZoom)
+      mapElement:SetWidth((thisData.height * factor) / maxZoom * newZoom)
     end
 
     zoom = newZoom

@@ -323,11 +323,11 @@ end
 
 local function _fctMapEventChange(_, info)
 	
-  local thisMapData = InspectMapDetail(info)
+  local thisData = InspectMapDetail(info)
   local addList, changeList, removeList = {}, {}, {}
   local hasAdds, hasChanges, descTitleChange = false, false, false
 
-  for key, values in pairs(thisMapData) do
+  for key, values in pairs(thisData) do
     if _mapPoints[key] == nil then
       -- Neue Map-Punkte
       local identifiedValues = _fctIdentify(values)
@@ -645,13 +645,13 @@ end
 
 function internal.mapEvent.add (_, info)
 
-  local thisMapData = InspectMapDetail(info)
+  local thisData = InspectMapDetail(info)
 
   local changeList = {}
   local addList = {}
   local hasAdds, hasChanges = false, false
   
-  for key, values in pairs(thisMapData) do
+  for key, values in pairs(thisData) do
   
     local identifiedValues = _fctIdentify(values)
 

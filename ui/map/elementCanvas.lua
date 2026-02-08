@@ -18,7 +18,7 @@ local mathAbs		= math.abs
 
 local function _uiMapElementCanvas(name, parent)
 
-	local thisMapData = nil
+	local thisData = nil
 	local parentMap = nil
 	local zoom = 1
 	local tooltipTitle = nil
@@ -53,30 +53,30 @@ local function _uiMapElementCanvas(name, parent)
 
 		elementType = newElementType
 
-		thisMapData = mapData.mapElements[newElementType]
+		thisData = mapData.mapElements[newElementType]
 		
 		if radius ~= nil then
-			thisMapData.width = radius * 3
-			thisMapData.height = radius * 3
+			thisData.width = radius * 3
+			thisData.height = radius * 3
 		end
 
-		if thisMapData.path ~= nil then path = thisMapData.path end
+		if thisData.path ~= nil then path = thisData.path end
 
-		fill = thisMapData.fill
-		stroke = thisMapData.stroke
+		fill = thisData.fill
+		stroke = thisData.stroke
 
-		if thisMapData.anim ~= nil then
+		if thisData.anim ~= nil then
 			if parentMap:GetAnimated() == true then
 				mapElement:RegisterAnimation (parentMap:GetAnimationSpeed())
 			else
 				mapElement:SetShape(path, fill, stroke)
 			end
 		else
-			if radian ~= nil then fill.transform = Utility.Matrix.Create(1 / thisMapData.width * mapElement:GetWidth(), 1 / thisMapData.height * mapElement:GetHeight(), radian, 0, 0) end
+			if radian ~= nil then fill.transform = Utility.Matrix.Create(1 / thisData.width * mapElement:GetWidth(), 1 / thisData.height * mapElement:GetHeight(), radian, 0, 0) end
 			mapElement:SetShape(path, fill, stroke) 
 		end
 
-		if thisMapData.layer ~= nil then mapElement:SetLayer(thisMapData.layer) end
+		if thisData.layer ~= nil then mapElement:SetLayer(thisData.layer) end
 		
 	end
 
@@ -142,29 +142,29 @@ local function _uiMapElementCanvas(name, parent)
 
 		if newZoom == zoom then return end
 
-		local factor = thisMapData.factor or 1
+		local factor = thisData.factor or 1
 
-		if thisMapData.minZoom ~= nil then 
-			if thisMapData.minZoom > newZoom then     
-				mapElement:SetHeight(thisMapData.width / thisMapData.minZoom * newZoom * factor)
-				mapElement:SetWidth(thisMapData.height / thisMapData.minZoom * newZoom * factor)
+		if thisData.minZoom ~= nil then 
+			if thisData.minZoom > newZoom then     
+				mapElement:SetHeight(thisData.width / thisData.minZoom * newZoom * factor)
+				mapElement:SetWidth(thisData.height / thisData.minZoom * newZoom * factor)
 			else
-				mapElement:SetHeight(thisMapData.width * factor)
-				mapElement:SetWidth(thisMapData.height * factor)
+				mapElement:SetHeight(thisData.width * factor)
+				mapElement:SetWidth(thisData.height * factor)
 			end
 		else
-			mapElement:SetHeight(thisMapData.width / maxZoom * newZoom* factor)
-			mapElement:SetWidth(thisMapData.height / maxZoom * newZoom* factor)
+			mapElement:SetHeight(thisData.width / maxZoom * newZoom* factor)
+			mapElement:SetWidth(thisData.height / maxZoom * newZoom* factor)
 		end
 
 		zoom = newZoom
 
 		if coordX ~= nil and coordY ~= nil then mapElement:SetCoord() end
 
-		if thisMapData.anim == nil then 
+		if thisData.anim == nil then 
 			mapElement:ReDraw()
 		else
-			local scale = 1 / thisMapData.width * mapElement:GetWidth()
+			local scale = 1 / thisData.width * mapElement:GetWidth()
 			LibMap.fx.update (effectName, { scale = scale}) 
 		end
 		
@@ -185,8 +185,8 @@ local function _uiMapElementCanvas(name, parent)
 		
 		local newRadian
 
-		if thisMapData.angleCorr ~= nil then
-			newRadian = mathRad(angle + thisMapData.angleCorr)
+		if thisData.angleCorr ~= nil then
+			newRadian = mathRad(angle + thisData.angleCorr)
 		else
 			newRadian = mathRad(angle)
 		end
@@ -202,7 +202,7 @@ local function _uiMapElementCanvas(name, parent)
 
 	function mapElement:ReDraw()
 
-		local scale = 1 / thisMapData.width * mapElement:GetWidth()
+		local scale = 1 / thisData.width * mapElement:GetWidth()
 
 		if radian ~= nil then 
 			local m = LibEKL.Tools.Gfx.Rotate(mapElement, radian, scale)
@@ -221,27 +221,27 @@ local function _uiMapElementCanvas(name, parent)
 	function mapElement:RegisterAnimation (thisAnimationSpeed)
 
 		if parentMap:GetAnimated() == true then
-			if thisMapData.anim == "rotation" then
+			if thisData.anim == "rotation" then
 				effectName = name .. ".rotate"
 
-				--local animZoom = thisMapData.animZoom or 1
-				local scale = 1 / thisMapData.width * mapElement:GetWidth()
+				--local animZoom = thisData.animZoom or 1
+				local scale = 1 / thisData.width * mapElement:GetWidth()
 
 				LibMap.fx.register (effectName, mapElement, {id = "rotateCanvas", speed = (thisAnimationSpeed or 0), scale = scale, path = path, fill = fill  })
-			elseif thisMapData.anim == "pulse" then
+			elseif thisData.anim == "pulse" then
 				effectName = name .. ".pulse"
 
-				--local animZoom = thisMapData.animZoom or 1
-				local scale = 1 / thisMapData.width * mapElement:GetWidth()
+				--local animZoom = thisData.animZoom or 1
+				local scale = 1 / thisData.width * mapElement:GetWidth()
 
 				LibMap.fx.register (effectName, mapElement, {id = "pulseCanvas", speed = (thisAnimationSpeed or 0), scale = scale, path = path, fill = fill  })
-			elseif thisMapData.anim == "animation" then
+			elseif thisData.anim == "animation" then
 				effectName = name .. ".animation"
 
-				local animZoom = thisMapData.animZoom or 1				
-				local scale = animZoom or 1 / thisMapData.width * mapElement:GetWidth()
+				local animZoom = thisData.animZoom or 1				
+				local scale = animZoom or 1 / thisData.width * mapElement:GetWidth()
 
-				LibMap.fx.register (effectName, mapElement, {id = "animateCanvas", speed = .2, scale = scale, path = path, fill = fill, textureList = thisMapData.textureList })
+				LibMap.fx.register (effectName, mapElement, {id = "animateCanvas", speed = .2, scale = scale, path = path, fill = fill, textureList = thisData.textureList })
 			else
 				effectName = nil
 			end
@@ -251,7 +251,7 @@ local function _uiMapElementCanvas(name, parent)
 
 	function mapElement:SetAnimated(flag, newAnimationSpeed)
 		
-		if thisMapData.anim == nil then return end
+		if thisData.anim == nil then return end
 
 		if newAnimationSpeed ~= animationSpeed then
 			animationSpeed = newAnimationSpeed or 0
