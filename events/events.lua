@@ -138,18 +138,15 @@ local function _fctUpdateHandler()
 	
 	if (_lastUpdate1 == nil or _curTime - _lastUpdate1 >= .1) then
 	
-		 if thisWatchDog >= 0.1 and _eventsP1Index == 1 then
-			--internal.processAbilityCooldowns()
+		 if thisWatchDog >= 0.1 and _eventsP1Index == 1 then			
 			_eventsP1Index = 2
 		 end
 		 
-		 if thisWatchDog >= 0.1 and _eventsP1Index == 2 then
-			--internal.processItemCooldowns()
+		 if thisWatchDog >= 0.1 and _eventsP1Index == 2 then			
 			_eventsP1Index = 3
 		 end
 		 
-		 if thisWatchDog >= 0.1 and _eventsP1Index == 3 then
-			--internal.processBuffs()
+		 if thisWatchDog >= 0.1 and _eventsP1Index == 3 then			
 			_eventsP1Index = 1
 		 end
 	
@@ -163,8 +160,7 @@ local function _fctUpdateHandler()
 		_eventsRemIndex = 2
 	end
 	
-	if thisWatchDog >= 0.1 and _eventsRemIndex == 2 then
-		internal.uiGarbageCollector()
+	if thisWatchDog >= 0.1 and _eventsRemIndex == 2 then		
 		_eventsRemIndex = 1
 	end
 	
