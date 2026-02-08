@@ -40,14 +40,12 @@ RunOnStartup = {
 
 Embed = {
   ["Libs/LibAsyncTextures"] = true,
-	["Libs/LibTransform2"] = true,
 	["Libs/LibUnitChange"] = true
 }
 
 Dependencies = {
 	LibEKL = {"required", "before"},
   LibAsyncTextures = {"required", "before"},
-	LibTransform2 = {"required", "before"},
 	LibUnitChange = {"required", "before"}
 }
 
