@@ -42,3 +42,5 @@ end
 function elementManager.GetPoolSize()
     return #elementPool
 end
+
+LibMap.ElementManager = elementManager
