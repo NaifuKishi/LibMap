@@ -9,9 +9,9 @@ local internal    = privateVars.internal
 local data        = privateVars.data
 local mapData     = privateVars.mapData
 local colossusData= privateVars.colossusData
-local NPCData	  = privateVars.NPCData
+local NPCData	    = privateVars.NPCData
 local lang        = privateVars.langTexts
-local oFuncs	  = privateVars.oFuncs
+local oFuncs	    = privateVars.oFuncs
 
 internal.mapEvent = {}
 
@@ -671,3 +671,5 @@ function internal.mapEvent.add (_, info)
   if hasChanges then LibMap.eventHandlers["LibMap.map"]["change"](changeList) end
 
 end
+
+function LibMap.GetMapElements() return mapData.mapElements end
