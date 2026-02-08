@@ -176,7 +176,7 @@ mapData.mapElements = {
   ["RIFT.COLOSSUS.EARTH"] = {path = "indicator_collossus_earth.png.dds", width = 64, height = 64, minZoom = 1, layer = LAYER_RIFT},
   ["RIFT.COLOSSUS.FIRE"] = {path = "indicator_collossus_earth.png.dds", width = 64, height = 64, minZoom = 1, layer = LAYER_RIFT},
   
-  ["RIFT.CRAFTING"]				  = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftCrafting.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.CRAFTING"]				  = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftCraft.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   
   ["RIFT.MINOR.ACTIVE.FIRE"]    = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftFire.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
   ["RIFT.MINOR.ACTIVE.WATER"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftWater.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
@@ -208,9 +208,8 @@ mapData.mapElements = {
   ["RIFT.MAJOR.UNSTABLE.AIR"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftMajorAir.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
   ["RIFT.MAJOR.UNSTABLE.EARTH"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftMajorDeath.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
   ["RIFT.MAJOR.UNSTABLE.DEATH"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftMajorEarth.png"}, width = 64, height = 64, anim = "rotation", minZoom = 2, layer = LAYER_RIFT},
-
-  ["RIFT.MAJOR.ACTIVE.NIGHTMARE"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  ["RIFT.MAJOR.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MAJOR.ACTIVE.NIGHTMARE"]   = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftMajorNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.MAJOR.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftMajorNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   
   ["RIFT.EXPERT.ACTIVE.FIRE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertFire.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.EXPERT.ACTIVE.WATER"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertWater.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
@@ -218,8 +217,7 @@ mapData.mapElements = {
   ["RIFT.EXPERT.ACTIVE.AIR"]       = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertAir.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.EXPERT.ACTIVE.EARTH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertEarth.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.EXPERT.ACTIVE.DEATH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertDeath.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-
-  ["RIFT.EXPERT.ACTIVE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.EXPERT.ACTIVE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   
   ["RIFT.EXPERT.UNSTABLE.FIRE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertFire.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.EXPERT.UNSTABLE.WATER"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertWater.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
@@ -227,8 +225,7 @@ mapData.mapElements = {
   ["RIFT.EXPERT.UNSTABLE.AIR"]       = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertAir.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.EXPERT.UNSTABLE.EARTH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertEarth.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.EXPERT.UNSTABLE.DEATH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertDeath.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  
-  ["RIFT.EXPERT.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.EXPERT.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftExpertNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   
   ["RIFT.RAID.ACTIVE.FIRE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidFire.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.RAID.ACTIVE.WATER"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidWater.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
@@ -236,8 +233,7 @@ mapData.mapElements = {
   ["RIFT.RAID.ACTIVE.AIR"]       = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidAir.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.RAID.ACTIVE.EARTH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidEarth.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.RAID.ACTIVE.DEATH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidDeath.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-  
-  ["RIFT.RAID.ACTIVE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.RAID.ACTIVE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   
   ["RIFT.RAID.UNSTABLE.FIRE"]      = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidire.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.RAID.UNSTABLE.WATER"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidWater.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
@@ -245,8 +241,7 @@ mapData.mapElements = {
   ["RIFT.RAID.UNSTABLE.AIR"]       = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidAir.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.RAID.UNSTABLE.EARTH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidEarth.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
   ["RIFT.RAID.UNSTABLE.DEATH"]     = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidDeath.png"}, width = 36, height = 36, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
-
-  ["RIFT.RAID.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
+  ["RIFT.RAID.UNSTABLE.NIGHTMARE"] = {fill = {type = "texture", source = "LibMap", texture = "gfx/mapIcons/iconRiftRaidNightmare.png"}, width = 34, height = 34, minZoom = 1, anim = "rotation", layer = LAYER_RIFT},
 
   ["RIFT.MINOR.UNOPENED"] = { addon = "LibMap", path = "gfx/mapIcons/iconRiftMinorUnopened.png", width = 64, height = 64, factor = 0.5, minZoom = 1, layer = LAYER_RIFT},
   ["RIFT.MAJOR.UNOPENED"] = { addon = "LibMap", path = "gfx/mapIcons/iconRiftMajorUnopened.png", width = 64, height = 64, factor = 0.5, minZoom = 1, layer = LAYER_RIFT},
