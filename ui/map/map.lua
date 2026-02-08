@@ -732,7 +732,6 @@ local function _uiMap(name, parent)
 
 		if drag ~= true then
 			_fctUpdateCoord(posX, posY) 
-			--print ("hossa")
 			LibMap.eventHandlers[name]["MouseMoved"](coordLabel:GetText())
 			return 
 		end

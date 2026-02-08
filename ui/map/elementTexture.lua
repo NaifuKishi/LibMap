@@ -102,32 +102,18 @@ local function _uiMapElementTexture(name, parent)
 
   function mapElement:SetCoord(x, y)
 
-    --[[if nkDebug then
-        nkDebug.logEntry (addonInfo.identifier, "----------")
-				nkDebug.logEntry (addonInfo.identifier, "mapElement:SetCoord: " .. elementType, "SetCoord", {x, y})
-		end]]
-  
     if x == coordX and y == coordY then
-      --[[if nkDebug then
-          nkDebug.logEntry (addonInfo.identifier, "mapElement:SetCoord", stringFormat("x: %d, y: %d - coordX: %d, coordY: %d", x, y, coordX, coordY))
-      end]]
       return 
     end
     
-    if smoothCoords == false and x ~= nil and mathFloor(mathAbs(coordX - x)) < 1 and y ~= nil and mathFloor(mathAbs(coordY - y)) < 1 then 
-      --[[if nkDebug then
-          nkDebug.logEntry (addonInfo.identifier, "mapElement:SetCoord", "the other check failed")
-      end]]
+    if smoothCoords == false and x ~= nil and mathFloor(mathAbs(coordX - x)) < 1 and y ~= nil and mathFloor(mathAbs(coordY - y)) < 1 then       
       return 
     end
           
     if x ~= nil then coordX = x end
     if y ~= nil then coordY = y end
     
-    if coordX == nil or coordY == nil then 
-      --[[if nkDebug then
-          nkDebug.logEntry (addonInfo.identifier, "mapElement:SetCoord", "coordX == nil or coordY == nil")
-      end]]
+    if coordX == nil or coordY == nil then
       return 
     end
 
@@ -141,10 +127,6 @@ local function _uiMapElementTexture(name, parent)
     thisX = (parentMap:GetMap():GetWidth() * xP) - (mapElement:GetWidth() / 2)
     thisY = (parentMap:GetMap():GetHeight() * yP) - (mapElement:GetWidth() / 2)
 
-    --[[if nkDebug then
-				nkDebug.logEntry (addonInfo.identifier, "mapElement:SetCoord", stringFormat("SETPOINT %d / %d", thisX, thisY))
-		end]]
-      
     mapElement:SetPoint("TOPLEFT", parentMap:GetMap(), "TOPLEFT", thisX, thisY)
     
   end
