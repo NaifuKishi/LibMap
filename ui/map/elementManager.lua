@@ -4,13 +4,14 @@ local elementManager 	= privateVars.elementManager
 
 local elementPool = {
     ["nkMapElementCanvas"] = {},
+    ["nkMapElementCanvasAnim"] = {},
     ["nkMapElementTexture"] = {}
 }
 
 -- Fügt ein Element dem Pool hinzu
 function elementManager.ReturnElement(elementType, element)
 
-    element:SetVisible(false)
+    elementManager.ResetElement(element)
     table.insert(elementPool[elementType], element)
 
 end
@@ -30,12 +31,9 @@ function elementManager.GetElement(elementType, elementName, parent)
 end
 
 -- Setzt ein Element zurück, um es wiederverwendbar zu machen
-function elementManager.ResetElement(element, elementName, parent)
-
-    element:SetId(elementName)
-    element:SetParent(parent)
-    element:SetVisible(true)
-    -- Weitere Eigenschaften zurücksetzen, falls nötig
+function elementManager.ResetElement(element)
+    element:SetVisible(false)
+    element:Reset()
 end
 
 -- Gibt die aktuelle Größe des Pools zurück (für Debugging)

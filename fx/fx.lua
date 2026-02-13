@@ -63,6 +63,7 @@ function internal.processFX()
 
 	local now = InspectTimeReal()
 
+	-- das Problem scheint zu sein wenn die Size ändert und die Texture nicht passt
 
 	for id, details in pairs (_fxStore) do
 
@@ -73,7 +74,7 @@ function internal.processFX()
 					if now - _fxStore[id].lastUpdate > (details.effect.speed or 1) and details.frame:GetVisible() == true then
 						_fxStore[id].lastUpdate = now
 						if details.angle == nil then details.angle = 0 else details.angle = details.angle + 1 end
-						details.effect.fill.transform = LibEKL.Tools.Gfx.Rotate(details.frame, mathRad(details.angle), (details.effect.scale or 1))
+						details.effect.fill.transform = LibEKL.Tools.Gfx.Rotate(details.frame, mathRad(details.angle), (details.effect.scale or 1))						
 						details.frame:SetShape(details.effect.path, details.effect.fill, nil)
 					end
 				end

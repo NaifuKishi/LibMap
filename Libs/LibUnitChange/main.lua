@@ -68,35 +68,6 @@ local function process(changes)
   end
 end
 
---[[
-   _Register
-    Description:
-        Creates an event for tracking changes to a specific unit specifier.
-        The event will be triggered whenever the unit referenced by the specifier changes.
-    Parameters:
-        identifier (string): The unit specifier to track (e.g., "player.target")
-    Returns:
-        event (table): The event table for the registered unit specifier
-    Process:
-        1. Checks if the identifier is already registered
-        2. Initializes tracking for the new unit specifier
-        3. Creates the event in the Event.LibUnitChange hierarchy
-        4. Triggers an initial update to get the current state
-        5. Returns the event table for the caller to attach callbacks
-    Notes:
-        - The event will be triggered with the new unit ID or "false" when no unit exists
-        - The event is created under Event.LibUnitChange.[identifier].Change
-        - Callbacks should handle both unit ID changes and "false" values
-    Example:
-        local targetEvent = Library.LibUnitChange.Register("player.target")
-        Command.Event.Attach(targetEvent, function(newUnitId)
-            if newUnitId then
-                print("New target: " .. newUnitId)
-            else
-                print("No target")
-            end
-        end)
-]]
 function Library.LibUnitChange.Register(identifier)
   if lookups[identifier] then
     return lookups[identifier]

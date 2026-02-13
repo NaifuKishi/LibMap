@@ -394,8 +394,6 @@ local function _uiMap(name, parent)
 
 		_fctPosition(newX, newY)
 
-		--if x == mathFloor(newX) and y == mathFloor(newY) then return end -- only do computation of radius for significant x / y change
-
 		local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
 		local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
 		
@@ -415,11 +413,7 @@ local function _uiMap(name, parent)
 
 				-- Check if the element's coordinates, considering its radius, are within the coordsArea
 				if eleX + radius >= coordsArea.x1 and eleX - radius <= coordsArea.x2 and eleZ + radius >= coordsArea.y1 and eleZ - radius <= coordsArea.y2 then
-					--if not element:GetDuplicate() then
-						element:SetVisible(true)
-					--else
-					--	element:SetVisible(false)
-					--end
+					element:SetVisible(true)
 				else
 					element:SetVisible(false)
 				end
@@ -490,8 +484,7 @@ local function _uiMap(name, parent)
 		if mapInfo.anim ~= nil then
 			
 			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     mapInfo.anim") end
-			thisElement = elementManager.GetElement("nkMapElementCanvas", newElement.type .. "." .. LibMapUUID(), mask)
-
+			thisElement = elementManager.GetElement("nkMapElementCanvasAnim", newElement.type .. "." .. LibMapUUID(), mask)
 		elseif mapInfo.gfxType == nil or stringLower(mapInfo.gfxType) == 'texture' then
 
 			if nkDebug then nkDebug.logEntry (addonInfo.identifier, "ui:AddElement", "     texture") end
@@ -613,7 +606,6 @@ local function _uiMap(name, parent)
 				if thisElement:GetVisible() == true and #details > 0 then
 					for k, v in pairs(details) do
 						if elements[v] ~= nil then
-							elements[v]:SetDuplicate(false)
 							elements[v]:SetVisible(true)
 							break
 						end

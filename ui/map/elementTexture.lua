@@ -162,16 +162,17 @@ local function _uiMapElementTexture(name, parent)
   function mapElement:GetCoord() return coordX, coordY end
   function mapElement:GetTooltip() return tooltip end
   function mapElement:GetType() return "nkMapElementTexture" end
+
+  function mapElement:Reset()
   
-  function mapElement:SetDuplicate(flag) duplicate = flag end
-  function mapElement:GetDuplicate() return duplicate end
+  end
   
   local oSetVisible = mapElement.SetVisible
   
   function mapElement:SetVisible(flag)
-	if flag == visibleState then return end
-	visibleState = flag
-	oSetVisible(self, flag)
+	  if flag == visibleState then return end
+	  visibleState = flag
+	  oSetVisible(self, flag)
   end
   
   ----- EVENTS

@@ -16,7 +16,7 @@ local mathAbs		= math.abs
 
 ---------- addon internal function block ---------
 
-local function _uiMapElementCanvas(name, parent)
+local function _uiMapElementCanvasAnim(name, parent)
 
 	local thisData = nil
 	local parentMap = nil
@@ -24,12 +24,15 @@ local function _uiMapElementCanvas(name, parent)
 	local tooltipTitle = nil
 	local tooltipLines = nil
 	local maxZoom = 4
-	local radian = nil
+	local waypoint = nil
+	--local radian = nil
 	local tooltip = false
+	local effectName = nil
 	local fill = nil
 	local stroke = nil  
-	local radius = nil
+	local duplicate = false
 	local visibleState = false
+	local animationSpeed = 0
 	local lastX, lastY = 0, 0
 	local lastAngle = 0
 	local thisId
@@ -39,7 +42,7 @@ local function _uiMapElementCanvas(name, parent)
 
 	local coordX, coordY, zoom = 0, 0, nil
 
-	local mapElement = LibEKL.UICreateFrame("nkCanvas", name .. ".canvas", parent)
+	local mapElement = LibEKL.UICreateFrame("nkCanvas", name .. ".canvasAnim", parent)
 	mapElement:SetLayer(2)
 	mapElement:SetVisible(false)
 
@@ -51,11 +54,6 @@ local function _uiMapElementCanvas(name, parent)
 
 		thisData = mapData.mapElements[newElementType]
 		
-		if radius ~= nil then
-			thisData.width = radius * 3
-			thisData.height = radius * 3
-		end
-
 		mapElement:SetWidth(thisData.width)
 		mapElement:SetHeight(thisData.height)
 
@@ -64,16 +62,17 @@ local function _uiMapElementCanvas(name, parent)
 		fill = thisData.fill
 		stroke = thisData.stroke
 
-		if radian ~= nil then fill.transform = Utility.Matrix.Create(1 / thisData.width * mapElement:GetWidth(), 1 / thisData.height * mapElement:GetHeight(), radian, 0, 0) end
-		mapElement:SetShape(path, fill, stroke) 
+		if parentMap:GetAnimated() == true then
+			mapElement:RegisterAnimation (parentMap:GetAnimationSpeed())
+		else
+			mapElement:SetShape(path, fill, stroke)
+		end
 
 		if thisData.layer ~= nil then mapElement:SetLayer(thisData.layer) end
 		
 	end
 
-	function mapElement:GetElementType()
-		return elementType
-	end
+	function mapElement:GetElementType() return elementType end
 
 	function mapElement:SetToolTip(title, newDesc)
 
@@ -152,9 +151,12 @@ local function _uiMapElementCanvas(name, parent)
 
 		if coordX ~= nil and coordY ~= nil then mapElement:SetCoord() end
 
-		mapElement:ReDraw()				
+		local scale = 1 / thisData.width * mapElement:GetWidth()
+		LibMap.fx.update (effectName, { scale = scale}) 
+		
 	end
 
+	--[[
 	function mapElement:SetAngle(angle) 
 
 		if lastAngle == nil then lastAngle = 0 end
@@ -162,7 +164,7 @@ local function _uiMapElementCanvas(name, parent)
 		local newAngle = angle
 
 		if newAngle == lastAngle then return end
-		
+
 		local newRadian
 
 		if thisData.angleCorr ~= nil then
@@ -190,26 +192,69 @@ local function _uiMapElementCanvas(name, parent)
 
 		mapElement:SetShape(path, fill, stroke)
 		
-	end
+	end	
+]]
 
 	function mapElement:GetCoord() return coordX, coordY end
 	function mapElement:GetTooltip() return tooltip end
+
+	----- Animation
+
+	function mapElement:RegisterAnimation (thisAnimationSpeed)
+
+		if parentMap:GetAnimated() == true then
+			if thisData.anim == "rotation" then
+				effectName = name .. ".rotate"
+
+				--local animZoom = thisData.animZoom or 1
+				local scale = 1 / thisData.width * mapElement:GetWidth()
+
+				LibMap.fx.register (effectName, mapElement, {id = "rotateCanvas", speed = (thisAnimationSpeed or 0), scale = scale, path = path, fill = fill  })
+			elseif thisData.anim == "pulse" then
+				effectName = name .. ".pulse"
+
+				local scale = 1 / thisData.width * mapElement:GetWidth()
+
+				LibMap.fx.register (effectName, mapElement, {id = "pulseCanvas", speed = (thisAnimationSpeed or 0), scale = scale, path = path, fill = fill  })
+			elseif thisData.anim == "animation" then
+				effectName = name .. ".animation"
+
+				local animZoom = thisData.animZoom or 1				
+				local scale = animZoom or 1 / thisData.width * mapElement:GetWidth()
+
+				LibMap.fx.register (effectName, mapElement, {id = "animateCanvas", speed = .2, scale = scale, path = path, fill = fill, textureList = thisData.textureList })
+			else
+				effectName = nil
+			end
+		end
+
+	end
+
+	function mapElement:SetAnimated(flag, newAnimationSpeed)
+		
+		if thisData.anim == nil then return end
+
+		if newAnimationSpeed ~= animationSpeed then
+			animationSpeed = newAnimationSpeed or 0
+			if effectName ~= nil then 
+				LibMap.fx.cancel(effectName)
+				effectName = nil 
+			end
+		end	
+	
+		if flag == true then
+			if effectName == nil then mapElement:RegisterAnimation(animationSpeed) end
+		else
+			if effectName ~= nil then 
+				LibMap.fx.cancel(effectName)
+				effectName = nil 
+			end
+		end
+	end
+
 	function mapElement:SetId(newId) thisId = newId end
 	function mapElement:GetId() return thisId end
-	function mapElement:GetRadius() return radius end
-	function mapElement:GetType() return "nkMapElementCanvas" end
-
-	function mapElement:SetRadius(newRadius) 
-
-		radius = newRadius
-
-		if mapElement ~= nil then
-			mapElement.width = radius * 3
-			mapElement.height = radius * 3
-		end
-		
-		path = {{xProportional = 0.5, yProportional = 0},  {xProportional = 1, yProportional = 0.5, xControlProportional = (61/64), yControlProportional = (3/64)}, {xProportional = 0.5, yProportional = 1, xControlProportional = (61/64), yControlProportional = (61/64)}, {xProportional = 0, yProportional = 0.5, xControlProportional = (3/64), yControlProportional = (61/64)}, {xProportional = 0.5, yProportional = 0, xControlProportional = (3/64), yControlProportional = (3/64)}}
-	end
+	function mapElement:GetType() return "nkMapElementCanvasAnim" end
 
 	local oSetVisible = mapElement.SetVisible
 
@@ -217,24 +262,45 @@ local function _uiMapElementCanvas(name, parent)
 		if flag == visibleState then return end
 		visibleState = flag
 		oSetVisible(self, flag)
+
+		if effectName then
+			if flag then
+				LibMap.fx.updateTime(effectName)
+			else
+				LibMap.fx.pauseEffect(effectName)
+			end
+		end
 	end
 
 	function mapElement:Reset()
-		radius = nil
-		thisData = nil
-		--parentMap = nil
-		zoom = 1
-		tooltipTitle = nil
-		tooltipLines = nil
-		radian = nil
+		
+		LibMap.fx.cancel(effectName)
+		effectName = nil
+
+		fill = thisData.fill
+		stroke = thisData.stroke
+		mapElement:SetShape(path, fill, stroke)
+
+		mapElement:SetWidth(thisData.width)
+		mapElement:SetHeight(thisData.height)
+
+		path = {{xProportional = 0, yProportional = 0}, {xProportional = 0, yProportional = 1}, {xProportional = 1, yProportional = 1},  {xProportional = 1, yProportional = 0}, {xProportional = 0, yProportional = 0}}
 		fill = nil
 		stroke = nil  
-		radius = nil
-		visibleState = false
-		lastX, lastY = 0, 0
+
+		coordX, coordY, zoom = 0, 0, nil
+		lastX, lastY = 0, 0				
 		lastAngle = 0
+
+		thisData = nil		
 		thisId = nil
 		elementType = nil
+
+		tooltipTitle = nil
+		tooltipLines = nil
+		--radian = nil
+		visibleState = false
+		
   	end
 
 	----- Events
@@ -273,4 +339,4 @@ local function _uiMapElementCanvas(name, parent)
   
 end
 
-uiFunctions.NKMAPELEMENTCANVAS= _uiMapElementCanvas
+uiFunctions.NKMAPELEMENTCANVASANIM = _uiMapElementCanvasAnim
