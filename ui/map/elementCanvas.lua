@@ -139,20 +139,29 @@ local function _uiMapElementCanvas(name, parent)
 	end
 
 	function mapElement:SetZoom(newZoom)
-
+	
 		if newZoom == zoom then return end
 
 		local factor = thisData.factor or 1
 
 		if thisData.minZoom ~= nil then 
-			if thisData.minZoom > newZoom then     
+			if thisData.minZoom > newZoom then
+
+				local newWidth = thisData.width / thisData.minZoom * newZoom * factor
+				if newWidth > 64 then print ("minZoom > newZoom", newWidth) end
 				mapElement:SetHeight(thisData.width / thisData.minZoom * newZoom * factor)
 				mapElement:SetWidth(thisData.height / thisData.minZoom * newZoom * factor)
 			else
+				if thisData.width * factor > 64 then
+					print ("minZoom < newZoom", thisData.width * factor, factor)
+				end
 				mapElement:SetHeight(thisData.width * factor)
 				mapElement:SetWidth(thisData.height * factor)
 			end
 		else
+			if thisData.width / maxZoom * newZoom * factor > 64 then
+				print ("minZoom == nil", thisData.width / maxZoom * newZoom * factor)
+			end
 			mapElement:SetHeight(thisData.width / maxZoom * newZoom* factor)
 			mapElement:SetWidth(thisData.height / maxZoom * newZoom* factor)
 		end

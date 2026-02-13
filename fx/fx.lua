@@ -10,6 +10,8 @@ local internal   = privateVars.internal
 local InspectTimeReal 		= Inspect.Time.Real
 local InspectAddonCurrent	= Inspect.Addon.Current
 
+local mathRad = math.rad
+
 ---------- init local variables ---------
 
 local _fxStore = {}
@@ -66,25 +68,14 @@ function internal.processFX()
 
 		if details.frame:GetVisible() then
 
-			if _fxStore[id].lastUpdate ~= nil then
+			if _fxStore[id].lastUpdate ~= nil then				
 				if details.effect.id == "rotateCanvas" then					
 					if now - _fxStore[id].lastUpdate > (details.effect.speed or 1) and details.frame:GetVisible() == true then
-						_fxStore[id].lastUpdate = now   
-
+						_fxStore[id].lastUpdate = now
 						if details.angle == nil then details.angle = 0 else details.angle = details.angle + 1 end
-
-						local radian = math.rad(details.angle)
-						--local m = LibEKL.Tools.Gfx.Rotate(details.frame, radian, (details.effect.scale or 1))
-						--details.effect.fill.transform = m:Get()    						
-						--dump ( LibEKL.Tools.Gfx.Rotate(details.frame, radian, (details.effect.scale or 1)))
-
-						local matrix = LibEKL.Tools.Gfx.Rotate(details.frame, radian, (details.effect.scale or 1))
-						--dump (matrix)
-						
-						details.effect.fill.transform = matrix
+						details.effect.fill.transform = LibEKL.Tools.Gfx.Rotate(details.frame, mathRad(details.angle), (details.effect.scale or 1))
 						details.frame:SetShape(details.effect.path, details.effect.fill, nil)
-						--print (details.frame:GetWidth(), details.frame:GetHeight())
-					end    
+					end
 				end
 			end
 		end
