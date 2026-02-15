@@ -37,6 +37,7 @@ end
 
 function LibMap.fx.cancel (id) 
 
+	if not _fxStore or not id or not _fxStore[id] then return end
 	_fxStore[id] = nil 
 	
 end
