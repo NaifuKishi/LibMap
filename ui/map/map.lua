@@ -502,10 +502,7 @@ local function _uiMap(name, parent)
 		if thisElement.SetSmoothCoords ~= nil then
 			thisElement:SetSmoothCoords(newElement.smoothCoords or false)
 		end	
-
-		local thisScale = scale
-		if maximized == true then thisScale = maximizedScale end
-
+		
 		thisElement:SetParentMap(ui)    
 
 		if newElement.radius ~= nil then thisElement:SetRadius(newElement.radius) end
@@ -526,8 +523,15 @@ local function _uiMap(name, parent)
 				nkDebug.logEntry (inspectAddonCurrent(), "_uiMap", "ui:AddElement error", "map entry without coordinates" .. newElement.id .. "\n\n" .. LibEKL.Tools.Table.Serialize(newElement))
 			end
 		else
-			thisElement:SetZoom(thisScale, maximized)
-			thisElement:SetCoord(newElement.coordX, thisY)
+			--local thisScale = scale
+			--if maximized == true then thisScale = maximizedScale end
+			--thisElement:SetZoom(thisScale, maximized)
+			--thisElement:SetCoord(newElement.coordX, thisY)
+
+			local currentScale = maximized and maximizedScale or scale
+			thisElement:SetZoom(currentScale, true)
+			thisElement:SetCoord(newElement.coordX, thisY) -- resizing needed beforehand
+
 		end
 
 		--if not duplicate then thisElement:SetVisible(true)  end

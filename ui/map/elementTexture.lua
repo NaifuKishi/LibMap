@@ -131,9 +131,9 @@ local function _uiMapElementTexture(name, parent)
     
   end
   
-  function mapElement:SetZoom(newZoom)
+  function mapElement:SetZoom(newZoom, force)
     
-	if newZoom == zoom then return end
+	if not force and newZoom == zoom then return end
 	
     local factor = thisData.factor or 1
     
