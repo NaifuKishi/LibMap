@@ -15,6 +15,7 @@ local elementManager	= privateVars.elementManager
 
 local inspectAddonCurrent	= Inspect.Addon.Current
 local inspectMouse			= Inspect.Mouse
+local inspectTimeReal		= Inspect.Time.Real
 
 local stringFormat			= string.format
 local stringLower			= string.lower
@@ -93,6 +94,16 @@ local function _uiMap(name, parent)
 
 	maskHeight = mask:GetHeight()
 	maskWidth = mask:GetWidth()
+
+	local zoomLabel = LibEKL.UICreateFrame("nkText", name .. ".zoomLabel", mask)
+	zoomLabel:SetPoint("CENTERRIGHT", ui:GetContent(), "CENTERRIGHT", -10, 0)
+	zoomLabel:SetFontSize(18)
+	zoomLabel:SetFontColor(1, 0.8, 0, 1)
+	zoomLabel:SetEffectGlow({ strength = 3 })
+	zoomLabel:SetLayer(500)
+	zoomLabel:SetVisible(false)
+	LibMap.ui.setFont(zoomLabel, addonInfo.id, "MontserratBold")
+	local zoomLabelHideAt = 0
 
 	local map = LibEKL.UICreateFrame("nkFrame", name .. ".map", mask)
 	map:SetLayer(1)
@@ -307,6 +318,10 @@ local function _uiMap(name, parent)
 		end
 		lastTileX, lastTileY = nil, nil
 		_fctRedraw()
+
+		zoomLabel:SetText(stringFormat("%.0f%%", tileZoom * 100))
+		zoomLabel:SetVisible(true)
+		zoomLabelHideAt = inspectTimeReal() + 1.5
 	end
 
 	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function()
@@ -320,6 +335,12 @@ local function _uiMap(name, parent)
 		tileZoom = math.max(tileZoom / 1.25, tileZoomMin)
 		_applyTileZoom()
 	end, name .. ".Wheel.Back")
+
+	Command.Event.Attach(Event.System.Update.Begin, function()
+		if zoomLabel:GetVisible() and inspectTimeReal() >= zoomLabelHideAt then
+			zoomLabel:SetVisible(false)
+		end
+	end, name .. ".zoomLabel.Update")
 
 	---------- PUBLIC METHODS ----------
 
