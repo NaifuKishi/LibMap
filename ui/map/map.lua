@@ -177,56 +177,6 @@ local function _uiMap(name, parent)
 
 	end
 
-	local function _fctZoomOut()
-
-		if mapWidth >= maskWidth and mapHeight >= maskHeight then
-
-			local debugId  
-			if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:ZoomOut") end
-
-			local thisScale = scale
-			if maximized == true then thisScale = maximizedScale end
-
-			if (thisScale - scaleStep >= 0) then
-				if maximized == true then 
-					maximizedScale = maximizedScale - scaleStep
-					thisScale = maximizedScale
-				else
-					scale = scale - scaleStep
-					thisScale = scale
-				end        
-				
-				_fctRedraw()
-				LibMap.eventHandlers[name]["Zoomed"](thisScale, maximized)
-			end 
-
-			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:ZoomOut", debugId) end     
-		end
-	end
-
-	local function _fctZoomIn()
-
-		local debugId
-		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:ZoomIn") end
-
-		local thisScale = scale
-		if maximized == true then thisScale = maximizedScale end
-
-		if thisScale < maxZoom then
-			if maximized == true then 
-				maximizedScale = maximizedScale + scaleStep
-			else
-				scale = scale + scaleStep
-			end    
-
-			_fctRedraw()
-			LibMap.eventHandlers[name]["Zoomed"](thisScale, maximized)
-		end
-
-		if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:ZoomIn", debugId) end
-
-	end
-
 	local function _fctUpdateCoord(cursorX, cursorY)
 
 		local debugId
@@ -745,9 +695,6 @@ local function _uiMap(name, parent)
 		LibMap.eventHandlers[name]["Resized"](newWidth, newHeight, maximized)
 		
 	end, name .. '.window.Resized')
-
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Wheel.Back, function () _fctZoomOut() end, ui:GetName() .. ".Mouse.Wheel.Back")
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function () _fctZoomIn() end, ui:GetName() .. ".Mouse.Wheel.Forward")
 
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Left.Down.Bubble, function ()
 
