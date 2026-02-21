@@ -158,9 +158,12 @@ local function _uiMap(name, parent)
 
 	local function _fctRedraw ()
 
-		local debugId  
-		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:Redraw") end    
-		
+		local debugId
+		if nkDebug then debugId = nkDebug.traceStart (inspectAddonCurrent(), "LibMap _uiMap:Redraw") end
+
+		maskWidth  = mask:GetWidth()
+		maskHeight = mask:GetHeight()
+
 		local currentScale = maximized and maximizedScale or scale
     	local originalScale = currentScale
 
@@ -302,6 +305,7 @@ local function _uiMap(name, parent)
 		textureMap = false 
 
 		scale = mapInfo.x2 / mapInfo.width
+		maximizedScale = scale
 
 		x, y = nil, nil
 
