@@ -61,6 +61,7 @@ local function _uiMap(name, parent)
 	local animationSpeed = 0
 	local allowWayPoints = true
 	local textureMap = true
+	local centerTile, midX, midY
 
 	local mapWidth, mapHeight
 	local maskWidth, maskHeight
@@ -93,41 +94,46 @@ local function _uiMap(name, parent)
 	map:SetLayer(1)
 
 	local mapTiles = {}
+	local tileRows, tileCols = 5, 11
 
-	for idx1 = 1, 3, 1 do
-		for idx2 = 1, 3, 1 do
+	-- Create 5x5 grid (25 tiles) for better coverage on large displays
+	for idx1 = 1, tileRows, 1 do
+		local rows = {}
+
+		for idx2 = 1, tileCols, 1 do
 			local thisMap = LibEKL.UICreateFrame("nkTexture", stringFormat("%s.map.%dx%d", name, idx1, idx2), mask)
 			thisMap:SetLayer(1)
-			table.insert(mapTiles, thisMap)
+			table.insert(rows, thisMap)
+		end
+
+		table.insert(mapTiles, rows)
+	end
+
+	centerTile = math.floor((tileRows * tileCols) / 2) + 1
+	midX = math.floor(tileCols / 2) + 1
+	midY = math.floor(tileRows / 2) + 1
+
+	-- Position 5x5 grid (center is tile 13)
+	mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER")
+
+	for row = 1, tileRows, 1 do
+		local thisRow = mapTiles[row]
+
+		for col = 1, tileCols, 1 do
+			local thisTile = thisRow[col]			
+
+			if col < midX then
+				thisTile:SetPoint("CENTERRIGHT", thisRow[col+1], "CENTERLEFT")
+			elseif col > midX then
+				thisTile:SetPoint("CENTERLEFT", thisRow[col-1], "CENTERRIGHT")
+			elseif row < midY then
+				thisTile:SetPoint("CENTERBOTTOM", mapTiles[row+1][col], "CENTERTOP")
+			elseif row > midY then
+				thisTile:SetPoint("CENTERTOP", mapTiles[row-1][col], "CENTERBOTTOM")
+			end
 		end
 	end
-	
-	mapTiles[5]:SetPoint("CENTER", mask, "CENTER")
-	mapTiles[4]:SetPoint("CENTERRIGHT", mapTiles[5], "CENTERLEFT")
-	mapTiles[6]:SetPoint("CENTERLEFT", mapTiles[5], "CENTERRIGHT")
 
-	mapTiles[2]:SetPoint("CENTERBOTTOM", mapTiles[5], "CENTERTOP")
-	mapTiles[1]:SetPoint("CENTERRIGHT", mapTiles[2], "CENTERLEFT")	
-	mapTiles[3]:SetPoint("CENTERLEFT", mapTiles[2], "CENTERRIGHT")
-		
-	mapTiles[8]:SetPoint("CENTERTOP", mapTiles[5], "CENTERBOTTOM")
-	mapTiles[7]:SetPoint("CENTERRIGHT", mapTiles[8], "CENTERLEFT")	
-	mapTiles[9]:SetPoint("CENTERLEFT", mapTiles[8], "CENTERRIGHT")
-
-	--[[ local oUISetWidth = ui.SetWidth
-	function ui:SetWidth(newWidth)
-		if newWidth == width then return end
-		width = newWidth
-		oUISetWidth(self, width)
-	end
-
-	local oUISetHeight = ui.SetHeight
-	function ui:SetHeight(newHeight)
-		if newHeight == height then return end
-		height = newHeight
-		oUISetHeight(self, height)
-	end
-]]
 	local oMapSetWidth = map.SetWidth
 	function map:SetWidth (width)
 		if mapWidth == width then return end
@@ -292,27 +298,8 @@ local function _uiMap(name, parent)
 		activeType = activeType
 		activeMap = mapName
 
-		--if mapName == "world1" or mapName == "world2" or mapName == "world3" or mapName == "world4" then 
-			mapInfo = LibMap.map.getMapData(stringFormat("%s_tiles", mapName))
-			textureMap = false 
-		--else
-		--	mapInfo = LibMap.map.getMapData (mapName) 
-		--	textureMap = true
-		--end
-
-		--if mapInfo.width <= mapInfo.height then
-		--	scaleStep = 1 / mapInfo.width * maskWidth
-		--else
-		--	scaleStep = 1 / mapInfo.height * maskHeight
-		--end 
-
-		--if scale == nil then scale = scaleStep end
-
-		--if textureMap then
-		--	local addon = mapInfo.addon
-		--	if addon == nil then addon = "Rift" end
-		--	map:SetTextureAsync(addon, mapInfo.path)
-		--end		
+		mapInfo = LibMap.map.getMapData(stringFormat("%s_tiles", mapName))
+		textureMap = false 
 
 		scale = mapInfo.x2 / mapInfo.width
 
@@ -323,23 +310,7 @@ local function _uiMap(name, parent)
 	end
 
 	function ui:SetZoom (newZoomLevel, thisMaximized)
---[[
-		if newZoomLevel <= 0 or newZoomLevel > maxZoom then return end
 
-		for idx = 0, maxZoom, scaleStep do
-			if newZoomLevel < idx then
-				if thisMaximized == true then
-					maximizedScale = newZoomLevel - scaleStep
-					if maximized == true then _fctRedraw () end
-				else
-					scale = newZoomLevel - scaleStep
-					if maximized == false then _fctRedraw () end
-				end
-
-				return
-			end
-		end
-]]
 	end
 
 	function ui:SetCoord (newCoordX, newCoordY)
@@ -382,19 +353,18 @@ local function _uiMap(name, parent)
 		local shiftY = 128 - offsetY
 
 		-- Apply the offset to the center tile
-		mapTiles[5]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
-
-		mapTiles[1]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY - 256))
-		mapTiles[2]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY - 256))
-		mapTiles[3]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY - 256))
 		
-		mapTiles[4]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY))
-		mapTiles[5]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
-		mapTiles[6]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY))
+		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
+		mapTiles[midY][midX]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
 
-		mapTiles[7]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY +256))
-		mapTiles[8]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY +256))
-		mapTiles[9]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY +256))
+		for row = 1, tileRows do
+			for col = 1, tileCols do
+				local x = tileX + (col - midX) * 256
+				local y = tileY + (row - midY) * 256
+
+				mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
+			end
+		end
 
 		local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
 		local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
