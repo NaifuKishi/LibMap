@@ -40,7 +40,6 @@ local function _uiMap(name, parent)
 	local scale = nil
 	local scaleStep = nil
 	local x, y
-	local drag = false
 	local mouseData = nil
 	local coordX, coordY = 0, 0
 	local elements = {}
@@ -169,8 +168,7 @@ local function _uiMap(name, parent)
 		end
 
 		if originalScale ~= currentScale then
-			if maximized == true then maximizedScale = currentScale else scale = currentScale end
-			LibMap.eventHandlers[name]["Zoomed"](currentScale, maximized)
+			if maximized == true then maximizedScale = currentScale else scale = currentScale end			
 		end
 
 		if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:Redraw", debugId) end
@@ -513,15 +511,9 @@ local function _uiMap(name, parent)
 				nkDebug.logEntry (inspectAddonCurrent(), "_uiMap", "ui:AddElement error", "map entry without coordinates" .. newElement.id .. "\n\n" .. LibEKL.Tools.Table.Serialize(newElement))
 			end
 		else
-			--local thisScale = scale
-			--if maximized == true then thisScale = maximizedScale end
-			--thisElement:SetZoom(thisScale, maximized)
-			--thisElement:SetCoord(newElement.coordX, thisY)
-
 			local currentScale = maximized and maximizedScale or scale
 			thisElement:SetZoom(currentScale, true)
 			thisElement:SetCoord(newElement.coordX, thisY) -- resizing needed beforehand
-
 		end
 
 		--if not duplicate then thisElement:SetVisible(true)  end
@@ -661,9 +653,7 @@ local function _uiMap(name, parent)
 	function ui:ShowCoords(flag) coordLabel:SetVisible(flag) end
 	function ui:SetAllowWayPoints(flag) allowWayPoints = flag end
 	function ui:SetMaximizable(flag) end
-	function ui:ShowHeader(flag)
-		ui:DisplayHeader(flag)
-	end
+	function ui:ShowHeader(flag) ui:DisplayHeader(flag) end
 
 	---------- EVENTS ---------- 
 
@@ -696,49 +686,9 @@ local function _uiMap(name, parent)
 		
 	end, name .. '.window.Resized')
 
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Left.Down.Bubble, function ()
-
-		drag = true
-		mouseData = inspectMouse()
-
-	end, ui:GetName() .. ".Mouse.Left.Down.Bubble")
-
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Cursor.Out, function ()
 		LibMap.eventHandlers[name]["MouseMoved"]("")
 	end, ui:GetName() .. ".Cursor.Out")
-
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Cursor.Move.Bubble, function (self, _, posX, posY)
-
-		if drag ~= true then
-			_fctUpdateCoord(posX, posY) 
-			LibMap.eventHandlers[name]["MouseMoved"](coordLabel:GetText())
-			return 
-		end
-
-		local diffX, diffY = posX - mouseData.x, posY - mouseData.y
-
-		local xP = 1 / mapWidth * mathAbs(diffX)
-		local yP = 1 / mapHeight * mathAbs(diffY)
-
-		if diffX < 0 then
-			coordX = coordX + ((mapInfo.x2 - mapInfo.x1) * xP)
-		else
-			coordX = coordX - ((mapInfo.x2 - mapInfo.x1) * xP)       
-		end
-
-		if diffY < 0 then
-			coordY = coordY + ((mapInfo.y2 - mapInfo.y1) * yP)
-		else
-			coordY = coordY - ((mapInfo.y2 - mapInfo.y1) * yP)       
-		end
-
-		ui:SetCoord ()
-		mouseData = inspectMouse()		
-
-	end, ui:GetName() .. ".Cursor.Move.Bubble")
-
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Left.Up.Bubble, function () drag = false end, ui:GetName() .. ".Mouse.Left.Up.Bubble")
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Left.Upoutside, function () drag = false end, ui:GetName()  .. ".Mouse.left.Upoutside")
 
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Right.Down.Bubble, function ()
 	
@@ -753,7 +703,6 @@ local function _uiMap(name, parent)
 	LibMap.eventHandlers[name]["Moved"], LibMap.events[name]["Moved"] = Utility.Event.Create(addonInfo.identifier, name .. "Moved")
 	LibMap.eventHandlers[name]["MouseMoved"], LibMap.events[name]["MouseMoved"] = Utility.Event.Create(addonInfo.identifier, name .. "MouseMoved")
 	LibMap.eventHandlers[name]["Resized"], LibMap.events[name]["Resized"] = Utility.Event.Create(addonInfo.identifier, name .. "Resized")
-	LibMap.eventHandlers[name]["Zoomed"], LibMap.events[name]["Zoomed"] = Utility.Event.Create(addonInfo.identifier, name .. "Zoomed")
 	LibMap.eventHandlers[name]["Toggled"], LibMap.events[name]["Toggled"] = Utility.Event.Create(addonInfo.identifier, name .. "Toggled")
 
 	return ui
