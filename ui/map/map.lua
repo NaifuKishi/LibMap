@@ -107,6 +107,7 @@ local function _uiMap(name, parent)
 		for idx2 = 1, tileCols, 1 do
 			local thisMap = LibEKL.UICreateFrame("nkTexture", stringFormat("%s.map.%dx%d", name, idx1, idx2), mask)
 			thisMap:SetLayer(1)
+			thisMap:SetMouseMasking("limited")
 			table.insert(rows, thisMap)
 		end
 
@@ -218,9 +219,11 @@ local function _uiMap(name, parent)
 		local yP = 1 / mapHeight * diffY
 
 		cursorCoordX = mathFloor(((mapInfo.x2 - mapInfo.x1) * xP) + mapInfo.x1)
-		cursorCoordY = mathFloor(((mapInfo.y2 - mapInfo.y1) * yP) + mapInfo.y1) 
+		cursorCoordY = mathFloor(((mapInfo.y2 - mapInfo.y1) * yP) + mapInfo.y1)
 
-		coordLabel:SetText(stringFormat("%d / %d", cursorCoordX, cursorCoordY))
+		local coordText = stringFormat("%d / %d", cursorCoordX, cursorCoordY)
+		coordLabel:SetText(coordText)
+		LibMap.eventHandlers[name]["MouseMoved"](coordText)
 
 		if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "_fctUpdateCoord", debugId) end
 
@@ -711,9 +714,14 @@ local function _uiMap(name, parent)
 		
 	end, name .. '.window.Resized')
 
-	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Cursor.Out, function ()
+	mask:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function (self, _, x, y)
+		_fctUpdateCoord(x, y)
+	end, name .. ".mask.Cursor.Move")
+
+	mask:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function ()
+		coordLabel:SetText(stringFormat("%d / %d", coordX, coordY))
 		LibMap.eventHandlers[name]["MouseMoved"]("")
-	end, ui:GetName() .. ".Cursor.Out")
+	end, name .. ".mask.Cursor.Out")
 
 	ui:GetContent():EventAttach(Event.UI.Input.Mouse.Right.Down.Bubble, function ()
 	
