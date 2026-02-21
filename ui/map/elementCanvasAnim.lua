@@ -134,24 +134,25 @@ local function _uiMapElementCanvasAnim(name, parent)
 
 		local factor = thisData.factor or 1
 
+		-- Use fixed 24x24 size instead of element-specific sizes
 		if thisData.minZoom ~= nil then 
 			if thisData.minZoom > newZoom then
-				mapElement:SetHeight(thisData.width / thisData.minZoom * newZoom * factor)
-				mapElement:SetWidth(thisData.height / thisData.minZoom * newZoom * factor)
+				mapElement:SetHeight(24 / thisData.minZoom * newZoom * factor)
+				mapElement:SetWidth(24 / thisData.minZoom * newZoom * factor)
 			else
-				mapElement:SetHeight(thisData.width * factor)
-				mapElement:SetWidth(thisData.height * factor)
+				mapElement:SetHeight(24 * factor)
+				mapElement:SetWidth(24 * factor)
 			end
 		else
-			mapElement:SetHeight(thisData.width / maxZoom * newZoom* factor)
-			mapElement:SetWidth(thisData.height / maxZoom * newZoom* factor)
+			mapElement:SetHeight(24 / maxZoom * newZoom* factor)
+			mapElement:SetWidth(24 / maxZoom * newZoom* factor)
 		end
 
 		zoom = newZoom
 
 		if coordX ~= nil and coordY ~= nil then mapElement:SetCoord() end
 
-		local scale = 1 / thisData.width * mapElement:GetWidth()
+		local scale = 1 / 24 * mapElement:GetWidth()
 		LibMap.fx.update (effectName, { scale = scale}) 
 		
 	end
