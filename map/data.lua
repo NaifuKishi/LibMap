@@ -22,10 +22,10 @@ mapData.mapData = {
   world3                  = { path = "world3_Map_Big_Revealed.dds", width = 4096, height = 4096, x1 = 0, x2 = 10232, y1 = 0, y2 = 10232},
   world4                  = { path = "world4_Map_Big_Revealed.dds", width = 4096, height = 4096, x1 = -2, x2 = 10235, y1 = 2, y2 = 10240},
 
-  world1_tiles            = { path = "world_terrain_%d_%d_mapimage.dds", width = 256, height = 256, x1 = 0, x2 = 17408, y1 = 0, y2 = 9216},
-  world2_tiles            = { path = "world2_terrain_%d_%d_mapimage.dds", width = 256, height = 256, x1 = 0, x2 = 20480, y1 = 0, y2 = 15360},
-  world3_tiles            = { path = "world3_terrain_%d_%d_mapimage.dds", width = 256, height = 256, x1 = 0, x2 = 10240, y1 = 0, y2 = 10240},
-  world4_tiles            = { path = "world3_terrain_%d_%d_mapimage.dds", width = 256, height = 256, x1 = 0, x2 = 10240, y1 = 0, y2 = 10240},
+  world1_tiles            = { path = "world_terrain_%d_%d_mapimage.dds", width = 4096, height = 2168, x1 = 0, x2 = 17408, y1 = 0, y2 = 9216},
+  world2_tiles            = { path = "world2_terrain_%d_%d_mapimage.dds", width = 4096, height = 3072, x1 = 0, x2 = 20480, y1 = 0, y2 = 15360},
+  world3_tiles            = { path = "world3_terrain_%d_%d_mapimage.dds", width = 4096, height = 3072, x1 = 0, x2 = 10240, y1 = 0, y2 = 10240},
+  world4_tiles            = { path = "world3_terrain_%d_%d_mapimage.dds", width = 4096, height = 4096, x1 = 0, x2 = 10240, y1 = 0, y2 = 10240},
   
   terminus                = { addon = "LibMap", path = "gfx/map/terminus.png", width = 746, height = 537, x1 = 395, x2 = 1107, y1 = 665, y2 = 1180},
   mathosia                = { addon = "LibMap", path = "gfx/map/mathosia.png", width = 552, height = 605, x1 = 726, x2 = 1375, y1 = 790, y2 = 1502},
