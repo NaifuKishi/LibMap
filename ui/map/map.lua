@@ -73,25 +73,7 @@ local function _uiMap(name, parent)
 	ui:SetHeight(370)
 	ui:SetDragable(true)
 	ui:SetCloseable(false)
-	ui:SetFontSize(12)
-
-	local iconZoomIn = LibEKL.UICreateFrame("nkTexture", name ..".iconZoomIn", ui:GetHeader())
-	iconZoomIn:SetTextureAsync("LibMap", "gfx/icons/zoomIn.png")
-	iconZoomIn:SetPoint("CENTERRIGHT", ui:GetHeader(), "CENTERRIGHT", -5, 0)
-	iconZoomIn:SetHeight(16)
-	iconZoomIn:SetWidth(16)
-
-	local iconZoomOut = LibEKL.UICreateFrame("nkTexture", name ..".iconZoomOut", ui:GetHeader())
-	iconZoomOut:SetTextureAsync("LibMap", "gfx/icons/zoomOut.png")
-	iconZoomOut:SetPoint("CENTERRIGHT", iconZoomIn, "CENTERLEFT", -2, 0)
-	iconZoomOut:SetHeight(16)
-	iconZoomOut:SetWidth(16)
-
-	local iconMinMax = LibEKL.UICreateFrame("nkTexture", name ..".iconMinMax", ui:GetHeader())
-	iconMinMax:SetTextureAsync("LibMap", "gfx/icons/maximize.png")
-	iconMinMax:SetPoint("CENTERRIGHT", iconZoomOut, "CENTERLEFT", -2, 0)
-	iconMinMax:SetHeight(16)
-	iconMinMax:SetWidth(16)
+	ui:SetFontSize(12)	
 
 	local coordLabel = LibEKL.UICreateFrame("nkText", name .. ".coordLabel", ui:GetHeader())
 	coordLabel:SetFontSize(12)
@@ -308,8 +290,7 @@ local function _uiMap(name, parent)
 	function ui:ToggleMinMax(internal)
 
 		if maximized == true then
-			maximized = false
-			iconMinMax:SetTextureAsync("LibMap", "gfx/icons/maximize.png")
+			maximized = false			
 
 			maximizedWidth = ui:GetWidth()
 			maximizedHeight = ui:GetHeight()
@@ -322,7 +303,6 @@ local function _uiMap(name, parent)
 
 		else
 			maximized = true
-			iconMinMax:SetTextureAsync("LibMap", "gfx/icons/minimize.png")
 
 			width = ui:GetWidth()
 			height = ui:GetHeight()
@@ -730,12 +710,8 @@ local function _uiMap(name, parent)
 	function ui:GetAnimationSpeed() return animationSpeed end
 	function ui:ShowCoords(flag) coordLabel:SetVisible(flag) end
 	function ui:SetAllowWayPoints(flag) allowWayPoints = flag end
-	function ui:SetMaximizable(flag) iconMinMax:SetVisible(flag) end
-
+	function ui:SetMaximizable(flag) end
 	function ui:ShowHeader(flag)
-		iconZoomIn:SetVisible(flag)
-		iconZoomOut:SetVisible(flag)
-		iconMinMax:SetVisible(flag)
 		ui:DisplayHeader(flag)
 	end
 
@@ -824,10 +800,6 @@ local function _uiMap(name, parent)
 		_fctProcessWayPoint()
 		
 	end, ui:GetName() .. ".Mouse.Right.Down.Bubble")  
-
-	iconZoomIn:EventAttach(Event.UI.Input.Mouse.Left.Down, function () _fctZoomIn() end, iconZoomIn:GetName() .. ".iconZoomIn.Mouse.Left.Down")
-	iconZoomOut:EventAttach(Event.UI.Input.Mouse.Left.Down, function () _fctZoomOut() end, iconZoomOut:GetName() .. ".iconZoomOut.Mouse.Left.Down")
-	iconMinMax:EventAttach(Event.UI.Input.Mouse.Left.Down, function () ui:ToggleMinMax(true) end, iconMinMax:GetName() .. ".iconMinMax.Mouse.Left.Down")
 
 	---------- EVENT HANDLERS ---------- 
 
