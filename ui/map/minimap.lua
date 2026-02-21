@@ -65,6 +65,11 @@ local function _uiMiniMap(name, parent)
 	local mapWidth, mapHeight
 	local maskWidth, maskHeight
 
+	local zoom = 1.0
+	local zoomMin = 0.5
+	local zoomMax = 4.0
+	local lastCoordX, lastCoordY
+
 	---------- UI ELEMENTS ----------
 
 	local ui = LibEKL.UICreateFrame("nkWindowElement", name .. ".window", parent)
@@ -109,8 +114,30 @@ local function _uiMiniMap(name, parent)
 	mapTiles[3]:SetPoint("CENTERLEFT", mapTiles[2], "CENTERRIGHT")
 		
 	mapTiles[8]:SetPoint("CENTERTOP", mapTiles[5], "CENTERBOTTOM")
-	mapTiles[7]:SetPoint("CENTERRIGHT", mapTiles[8], "CENTERLEFT")	
+	mapTiles[7]:SetPoint("CENTERRIGHT", mapTiles[8], "CENTERLEFT")
 	mapTiles[9]:SetPoint("CENTERLEFT", mapTiles[8], "CENTERRIGHT")
+
+	local function _applyZoom()
+		local size = mathFloor(256 * zoom)
+		for i = 1, 9 do
+			mapTiles[i]:SetWidth(size)
+			mapTiles[i]:SetHeight(size)
+		end
+		lastTileX, lastTileY = nil, nil
+		if lastCoordX and lastCoordY then
+			ui:SetCoord(lastCoordX, lastCoordY)
+		end
+	end
+
+	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function()
+		zoom = math.min(zoom * 1.25, zoomMax)
+		_applyZoom()
+	end, name .. ".Wheel.Forward")
+
+	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Back, function()
+		zoom = math.max(zoom / 1.25, zoomMin)
+		_applyZoom()
+	end, name .. ".Wheel.Back")
 
 	function ui:SetWorld(newWorld)
 		mapInfo = newWorld
@@ -118,6 +145,8 @@ local function _uiMiniMap(name, parent)
 	end
 
 	function ui:SetCoord(x, y)
+		lastCoordX, lastCoordY = x, y
+
 		-- 1. Kachel-Koordinaten berechnen
 		local tileX = math.floor(x / 256) * 256
 		local tileY = math.floor(y / 256) * 256
@@ -126,9 +155,9 @@ local function _uiMiniMap(name, parent)
 		local offsetX = x % 256
 		local offsetY = y % 256
 
-		-- 3. Verschiebung berechnen, um den Spieler in die Mitte zu bringen
-		local shiftX = 128 - offsetX
-		local shiftY = 128 - offsetY
+		-- 3. Verschiebung berechnen, um den Spieler in die Mitte zu bringen (scaled by zoom)
+		local shiftX = (128 - offsetX) * zoom
+		local shiftY = (128 - offsetY) * zoom
 
     	-- Apply the offset to the center tile
     	mapTiles[5]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)

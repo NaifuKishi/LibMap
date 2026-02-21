@@ -63,6 +63,9 @@ local function _uiMap(name, parent)
 	local textureMap = true
 	local centerTile, midX, midY
 	local lastTileX, lastTileY
+	local tileZoom = 1.0
+	local tileZoomMin = 0.5
+	local tileZoomMax = 4.0
 
 	local mapWidth, mapHeight
 	local maskWidth, maskHeight
@@ -177,6 +180,14 @@ local function _uiMap(name, parent)
 			currentScale = mathMax(xScale, yScale)
 		end
 
+		-- Persist fit-to-mask adjustment before applying tile zoom
+		if originalScale ~= currentScale then
+			if maximized == true then maximizedScale = currentScale else scale = currentScale end
+		end
+
+		-- Tile zoom applies only in non-maximized mode
+		if not maximized then currentScale = currentScale * tileZoom end
+
 		map:SetWidth(mapInfoWidth * currentScale)
 		map:SetHeight(mapInfoHeight * currentScale)
 
@@ -189,10 +200,6 @@ local function _uiMap(name, parent)
 		for key, thisElement in pairs (elements) do
 			thisElement:SetZoom(currentScale)
 			thisElement:SetCoord()
-		end
-
-		if originalScale ~= currentScale then
-			if maximized == true then maximizedScale = currentScale else scale = currentScale end			
 		end
 
 		if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "LibMap _uiMap:Redraw", debugId) end
@@ -237,7 +244,37 @@ local function _uiMap(name, parent)
 
 	end
 
-	local function _fctProcessWayPoint () 
+	local function _fctUpdateTiles()
+
+		if coordX == nil or coordY == nil then return end
+
+		local tileX = mathFloor(coordX / 256) * 256
+		local tileY = mathFloor(coordY / 256) * 256
+
+		local offsetX = coordX % 256
+		local offsetY = coordY % 256
+
+		local shiftX = (128 - offsetX) * tileZoom
+		local shiftY = (128 - offsetY) * tileZoom
+
+		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
+
+		if tileX ~= lastTileX or tileY ~= lastTileY then
+			lastTileX = tileX
+			lastTileY = tileY
+
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					local x = tileX + (col - midX) * 256
+					local y = tileY + (row - midY) * 256
+					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
+				end
+			end
+		end
+
+	end
+
+	local function _fctProcessWayPoint ()
 
 		if waypoint ~= nil then
 
@@ -256,6 +293,30 @@ local function _uiMap(name, parent)
 		end
 
 	end
+
+	local function _applyTileZoom()
+		local size = mathFloor(256 * tileZoom)
+		for row = 1, tileRows do
+			for col = 1, tileCols do
+				mapTiles[row][col]:SetWidth(size)
+				mapTiles[row][col]:SetHeight(size)
+			end
+		end
+		lastTileX, lastTileY = nil, nil
+		_fctRedraw()
+	end
+
+	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function()
+		if maximized then return end
+		tileZoom = math.min(tileZoom * 1.25, tileZoomMax)
+		_applyTileZoom()
+	end, name .. ".Wheel.Forward")
+
+	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Back, function()
+		if maximized then return end
+		tileZoom = math.max(tileZoom / 1.25, tileZoomMin)
+		_applyTileZoom()
+	end, name .. ".Wheel.Back")
 
 	---------- PUBLIC METHODS ----------
 
@@ -343,39 +404,8 @@ local function _uiMap(name, parent)
 
 		if smoothScroll == false then newX, newY = mathFloor(newX), mathFloor(newY) end
 
-		if newX == x and newY == y then return end
-
 		_fctPosition(newX, newY)
-		
-		local tileX = math.floor(coordX / 256) * 256
-		local tileY = math.floor(coordY / 256) * 256
-
-		-- 2. Offset innerhalb der Kachel berechnen
-		local offsetX = coordX % 256
-		local offsetY = coordY % 256
-
-		-- 3. Verschiebung berechnen, um den Spieler in die Mitte zu bringen
-		local shiftX = 128 - offsetX
-		local shiftY = 128 - offsetY
-
-		-- Apply the offset to the center tile
-		
-		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
-
-		-- Only update textures when the tile changes
-		if tileX ~= lastTileX or tileY ~= lastTileY then
-			lastTileX = tileX
-			lastTileY = tileY
-
-			for row = 1, tileRows do
-				for col = 1, tileCols do
-					local x = tileX + (col - midX) * 256
-					local y = tileY + (row - midY) * 256
-
-					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
-				end
-			end
-		end
+		_fctUpdateTiles()
 
 		local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
 		local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
