@@ -133,9 +133,11 @@ local function _uiMapElementCanvas(name, parent)
 	
 		if newZoom == zoom then return end
 
-		-- Use fixed 24x24 size for all elements
-		mapElement:SetHeight(24)
-		mapElement:SetWidth(24)
+		-- Use width/height from mapElements.lua if available, otherwise use 24x24
+		local width = thisData.width or 24
+		local height = thisData.height or 24
+		mapElement:SetHeight(height)
+		mapElement:SetWidth(width)
 
 		zoom = newZoom
 
