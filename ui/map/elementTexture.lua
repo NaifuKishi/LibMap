@@ -137,8 +137,8 @@ local function _uiMapElementTexture(name, parent)
 	  if not force and newZoom == zoom then return end
 	
     -- Use fixed 24x24 size for all elements
-    mapElement:SetHeight(24)
-    mapElement:SetWidth(24)
+    mapElement:SetHeight(thisData.height or 24)
+    mapElement:SetWidth(thisData.width or 24)
 
     zoom = newZoom
     
