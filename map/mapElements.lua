@@ -73,7 +73,7 @@ mapData.mapElements = {
   ["UNIT.MARK.30"]          = {path = "vfx_ui_mob_tag_clover_mini.png.dds", layer = 98},
   
   ["POI.CAVE"]      = { addon = "LibMap", path = "gfx/mapIcons/iconCave.png", layer = LAYER_POI},
-  ["POI.PORTAL"]    = { addon = "LibMap", path = "gfx/mapIcons/iconPortal.png", layer = LAYER_POI},
+  ["POI.PORTAL"]    = { addon = "LibMap", path = "gfx/mapIcons/iconPortal.png", layer = LAYER_POI, width = 64, height = 64},
   ["POI.QUESTHUB"]  = { addon = "LibMap", path = "gfx/mapIcons/iconQuestHub.png", layer = LAYER_POI},
   ["POI.OTHER"]     = { addon = "LibMap", path = "gfx/mapIcons/iconPOIOther.png", layer = LAYER_POI},
   ["POI.DUNGEON"]   = { addon = "LibMap", path = "gfx/mapIcons/iconChronicles.png", layer = LAYER_POI},
