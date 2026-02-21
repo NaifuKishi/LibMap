@@ -24,7 +24,7 @@ local LAYER_QUEST = 80
 ---------- set internal data ---------
 
 mapData.mapElements = {
-  ["UNKNOWN"]               = { addon = "LibMap", path = "gfx/mapIcons/iconUnknown.png", width = 32, height = 32, layer = 70},  
+  ["UNKNOWN"]               = { addon = "LibMap", path = "gfx/mapIcons/iconUnknown.png", layer = 70},  
   ["WAYPOINT"]              = { addon = "LibMap", path = "gfx/mapIcons/iconWaypoint.png", width = 16, height = 16, factor = 1.5, minZoom = 0, layer = 100},
 
   ["CUSTOMPOI"]             = { path = "icon_menu_achievements.png.dds", width = 32, height = 32, factor = 1, minZoom = 0, layer = 98},

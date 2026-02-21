@@ -135,21 +135,9 @@ local function _uiMapElementTexture(name, parent)
     
 	if not force and newZoom == zoom then return end
 	
-    local factor = thisData.factor or 1
-    
-    -- Use fixed 24x24 size instead of element-specific sizes
-    if thisData.minZoom ~= nil then 
-      if thisData.minZoom > newZoom then     
-        mapElement:SetHeight((24 * factor) / thisData.minZoom * newZoom)
-        mapElement:SetWidth((24 * factor) / thisData.minZoom * newZoom) 
-      else
-        mapElement:SetHeight(24 * factor)
-        mapElement:SetWidth(24 * factor)
-      end
-    else
-      mapElement:SetHeight((24 * factor) / maxZoom * newZoom)
-      mapElement:SetWidth((24 * factor) / maxZoom * newZoom)
-    end
+    -- Use fixed 24x24 size for all elements
+    mapElement:SetHeight(24)
+    mapElement:SetWidth(24)
 
     zoom = newZoom
     
