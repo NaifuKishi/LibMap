@@ -13,6 +13,7 @@ local mapData       = privateVars.mapData
 local mathFloor     = math.floor
 local mathAbs       = math.abs
 local stringFormat  = string.format
+local stringFind    = string.find
 
 local inspectAddonCurrent = Inspect.Addon.Current
 
@@ -133,7 +134,7 @@ local function _uiMapElementTexture(name, parent)
   
   function mapElement:SetZoom(newZoom, force)
     
-	if not force and newZoom == zoom then return end
+	  if not force and newZoom == zoom then return end
 	
     -- Use fixed 24x24 size for all elements
     mapElement:SetHeight(24)

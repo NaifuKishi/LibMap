@@ -38,7 +38,7 @@ local function _uiMap(name, parent)
 	local activeType = nil;
 	local mapInfo = nil
 	local scale = nil
-	local scaleStep = nil
+	--local scaleStep = nil
 	local x, y
 	local mouseData = nil
 	local coordX, coordY = 0, 0
@@ -47,7 +47,7 @@ local function _uiMap(name, parent)
 	local maximized = false
 	local maximizedX, maximizedY = 1, 1
 	local maximizedScale = 1
-	local width, height = 425, 370
+	local width, height = nkUISetup.modules.map.width, nkUISetup.modules.map.height
 	local maximizedWidth, maximizedHeight = 800, 600
 	local origCoordX, origCoordY = nil, nil, nil
 	local origX, origY = nil, nil
@@ -68,8 +68,8 @@ local function _uiMap(name, parent)
 	---------- UI ELEMENTS ----------
 
 	local ui = LibEKL.UICreateFrame("nkWindowElement", name .. ".window", parent)
-	ui:SetWidth(425)
-	ui:SetHeight(370)
+	ui:SetWidth(width)
+	ui:SetHeight(height)
 	ui:SetDragable(true)
 	ui:SetCloseable(false)
 	ui:SetFontSize(12)	
@@ -89,7 +89,7 @@ local function _uiMap(name, parent)
 	maskHeight = mask:GetHeight()
 	maskWidth = mask:GetWidth()
 
-	local map = LibEKL.UICreateFrame("nkTexture", name .. ".map", mask)
+	local map = LibEKL.UICreateFrame("nkFrame", name .. ".map", mask)
 	map:SetLayer(1)
 
 	local mapTiles = {}
@@ -114,6 +114,20 @@ local function _uiMap(name, parent)
 	mapTiles[7]:SetPoint("CENTERRIGHT", mapTiles[8], "CENTERLEFT")	
 	mapTiles[9]:SetPoint("CENTERLEFT", mapTiles[8], "CENTERRIGHT")
 
+	--[[ local oUISetWidth = ui.SetWidth
+	function ui:SetWidth(newWidth)
+		if newWidth == width then return end
+		width = newWidth
+		oUISetWidth(self, width)
+	end
+
+	local oUISetHeight = ui.SetHeight
+	function ui:SetHeight(newHeight)
+		if newHeight == height then return end
+		height = newHeight
+		oUISetHeight(self, height)
+	end
+]]
 	local oMapSetWidth = map.SetWidth
 	function map:SetWidth (width)
 		if mapWidth == width then return end
@@ -156,7 +170,7 @@ local function _uiMap(name, parent)
 		map:SetWidth(mapInfoWidth * currentScale)
 		map:SetHeight(mapInfoHeight * currentScale)
 
-		if x == nil and y == nil then	
+		if x == nil and y == nil then
 			ui:SetCoord((mapInfo.x2 - mapInfo.x1)/2, (mapInfo.y2 - mapInfo.y1)/2)
 		else
 			ui:SetCoord()
@@ -208,7 +222,7 @@ local function _uiMap(name, parent)
 		if y + mapHeight < maskHeight then
 			y = maskHeight - mapHeight
 		elseif y > 0 then y = 0 end
-
+		
 		map:SetPoint("TOPLEFT", mask, "TOPLEFT", x, y)		
 
 	end
@@ -278,27 +292,29 @@ local function _uiMap(name, parent)
 		activeType = activeType
 		activeMap = mapName
 
-		if mapName == "world1" or mapName == "world2" or mapName == "world3" or mapName == "world4" then 
+		--if mapName == "world1" or mapName == "world2" or mapName == "world3" or mapName == "world4" then 
 			mapInfo = LibMap.map.getMapData(stringFormat("%s_tiles", mapName))
 			textureMap = false 
-		else
-			mapInfo = LibMap.map.getMapData (mapName) 
-			textureMap = true
-		end
+		--else
+		--	mapInfo = LibMap.map.getMapData (mapName) 
+		--	textureMap = true
+		--end
 
-		if mapInfo.width <= mapInfo.height then
-			scaleStep = 1 / mapInfo.width * maskWidth
-		else
-			scaleStep = 1 / mapInfo.height * maskHeight
-		end 
+		--if mapInfo.width <= mapInfo.height then
+		--	scaleStep = 1 / mapInfo.width * maskWidth
+		--else
+		--	scaleStep = 1 / mapInfo.height * maskHeight
+		--end 
 
-		if scale == nil then scale = scaleStep end
+		--if scale == nil then scale = scaleStep end
 
-		if textureMap then
-			local addon = mapInfo.addon
-			if addon == nil then addon = "Rift" end
-			map:SetTextureAsync(addon, mapInfo.path)
-		end		
+		--if textureMap then
+		--	local addon = mapInfo.addon
+		--	if addon == nil then addon = "Rift" end
+		--	map:SetTextureAsync(addon, mapInfo.path)
+		--end		
+
+		scale = mapInfo.x2 / mapInfo.width
 
 		x, y = nil, nil
 
@@ -307,7 +323,7 @@ local function _uiMap(name, parent)
 	end
 
 	function ui:SetZoom (newZoomLevel, thisMaximized)
-
+--[[
 		if newZoomLevel <= 0 or newZoomLevel > maxZoom then return end
 
 		for idx = 0, maxZoom, scaleStep do
@@ -323,7 +339,7 @@ local function _uiMap(name, parent)
 				return
 			end
 		end
-
+]]
 	end
 
 	function ui:SetCoord (newCoordX, newCoordY)
@@ -354,33 +370,31 @@ local function _uiMap(name, parent)
 
 		_fctPosition(newX, newY)
 		
-		if not textureMap then
-			local tileX = math.floor(coordX / 256) * 256
-			local tileY = math.floor(coordY / 256) * 256
+		local tileX = math.floor(coordX / 256) * 256
+		local tileY = math.floor(coordY / 256) * 256
 
-			-- 2. Offset innerhalb der Kachel berechnen
-			local offsetX = coordX % 256
-			local offsetY = coordY % 256
+		-- 2. Offset innerhalb der Kachel berechnen
+		local offsetX = coordX % 256
+		local offsetY = coordY % 256
 
-			-- 3. Verschiebung berechnen, um den Spieler in die Mitte zu bringen
-			local shiftX = 128 - offsetX
-			local shiftY = 128 - offsetY
+		-- 3. Verschiebung berechnen, um den Spieler in die Mitte zu bringen
+		local shiftX = 128 - offsetX
+		local shiftY = 128 - offsetY
 
-			-- Apply the offset to the center tile
-			mapTiles[5]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
+		-- Apply the offset to the center tile
+		mapTiles[5]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
-			mapTiles[1]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY - 256))
-			mapTiles[2]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY - 256))
-			mapTiles[3]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY - 256))
-			
-			mapTiles[4]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY))
-			mapTiles[5]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
-			mapTiles[6]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY))
+		mapTiles[1]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY - 256))
+		mapTiles[2]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY - 256))
+		mapTiles[3]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY - 256))
+		
+		mapTiles[4]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY))
+		mapTiles[5]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
+		mapTiles[6]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY))
 
-			mapTiles[7]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY +256))
-			mapTiles[8]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY +256))
-			mapTiles[9]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY +256))
-		end
+		mapTiles[7]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY +256))
+		mapTiles[8]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY +256))
+		mapTiles[9]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY +256))
 
 		local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
 		local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
