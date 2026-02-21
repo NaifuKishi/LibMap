@@ -62,6 +62,7 @@ local function _uiMap(name, parent)
 	local allowWayPoints = true
 	local textureMap = true
 	local centerTile, midX, midY
+	local lastTileX, lastTileY
 
 	local mapWidth, mapHeight
 	local maskWidth, maskHeight
@@ -308,6 +309,7 @@ local function _uiMap(name, parent)
 		maximizedScale = scale
 
 		x, y = nil, nil
+		lastTileX, lastTileY = nil, nil
 
 		_fctRedraw()
 
@@ -359,14 +361,19 @@ local function _uiMap(name, parent)
 		-- Apply the offset to the center tile
 		
 		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
-		mapTiles[midY][midX]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
 
-		for row = 1, tileRows do
-			for col = 1, tileCols do
-				local x = tileX + (col - midX) * 256
-				local y = tileY + (row - midY) * 256
+		-- Only update textures when the tile changes
+		if tileX ~= lastTileX or tileY ~= lastTileY then
+			lastTileX = tileX
+			lastTileY = tileY
 
-				mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					local x = tileX + (col - midX) * 256
+					local y = tileY + (row - midY) * 256
+
+					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
+				end
 			end
 		end
 

@@ -88,6 +88,8 @@ local function _uiMiniMap(name, parent)
 	maskHeight = mask:GetHeight()
 	maskWidth = mask:GetWidth()
 
+	local lastTileX, lastTileY
+
 	local mapTiles = {}
 
 	for idx1 = 1, 3, 1 do
@@ -112,6 +114,7 @@ local function _uiMiniMap(name, parent)
 
 	function ui:SetWorld(newWorld)
 		mapInfo = newWorld
+		lastTileX, lastTileY = nil, nil
 	end
 
 	function ui:SetCoord(x, y)
@@ -130,17 +133,23 @@ local function _uiMiniMap(name, parent)
     	-- Apply the offset to the center tile
     	mapTiles[5]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
-		mapTiles[1]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY - 256))
-		mapTiles[2]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY - 256))
-		mapTiles[3]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY - 256))
-		
-		mapTiles[4]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY))
-		mapTiles[5]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
-		mapTiles[6]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY))
+		-- Only update textures when the tile changes
+		if tileX ~= lastTileX or tileY ~= lastTileY then
+			lastTileX = tileX
+			lastTileY = tileY
 
-		mapTiles[7]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY +256))
-		mapTiles[8]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY +256))
-		mapTiles[9]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY +256))
+			mapTiles[1]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY - 256))
+			mapTiles[2]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY - 256))
+			mapTiles[3]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY - 256))
+
+			mapTiles[4]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY))
+			mapTiles[5]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY))
+			mapTiles[6]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY))
+
+			mapTiles[7]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX - 256, tileY + 256))
+			mapTiles[8]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX, tileY + 256))
+			mapTiles[9]:SetTextureAsync("Rift", stringFormat(mapInfo.path, tileX + 256, tileY + 256))
+		end
 
 	end
 
