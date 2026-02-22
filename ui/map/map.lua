@@ -382,6 +382,8 @@ local function _uiMap(name, parent)
 
 	function ui:SetMap(activeType, mapName)
 
+		print (activeType, mapName)
+
 		if activeMap == mapName then return end
 
 		activeType = activeType
