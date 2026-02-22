@@ -125,10 +125,12 @@ local function _uiMapElementTexture(name, parent)
     
     local thisX, thisY
     
-    thisX = (parentMap:GetMap():GetWidth() * xP) - (mapElement:GetWidth() / 2)
-    thisY = (parentMap:GetMap():GetHeight() * yP) - (mapElement:GetWidth() / 2)
+    -- Calculate center position independent of icon size for proper positioning
+    thisX = (parentMap:GetMap():GetWidth() * xP)
+    thisY = (parentMap:GetMap():GetHeight() * yP)
 
-    mapElement:SetPoint("TOPLEFT", parentMap:GetMap(), "TOPLEFT", thisX, thisY)
+    -- Position the icon so its center is at the calculated coordinates
+    mapElement:SetPoint("CENTER", parentMap:GetMap(), "TOPLEFT", thisX, thisY)
     
   end
   
