@@ -52,9 +52,13 @@ mapData.mapData = {
   chronicle_ashenfall			  = { addon="LibMap", path="gfx/map/chronicle_ashenfall.png", width = 635, height = 640, x1 = 403, x2 = 1315, y1 = 370, y2 = 1290},
   
   --dungeon_irontomb              = { addon="LibMap", path = "gfx/map/dungeon_irontomb.png", width = 295, height = 481, x1 = 565, x2 = 860, y1 = 728, y2 = 1210},
-  dungeon_irontomb_tiles   = { path = "iron_tomb_terrain_%d_%d_mapimage.dds", width = 768, height = 1280, x1 = 0, x2 = 768, y1 = 0, y2 = 1280},
+  --dungeon_deepstrikemine        = { addon="LibMap", path = "gfx/map/dungeon_deepstrikemine.png", width = 480, height = 488, x1 = 305, x2 = 785, y1 = 178, y2 = 665},
+  
+  dungeon_irontomb_tiles               = { path = "iron_tomb_terrain_%d_%d_mapimage.dds", width = 512, height = 512, x1 = 512, x2 = 1024, y1 = 768, y2 = 1280},
+  --dungeon_deepstrikemine_tiles         = { path = "deepstrike_mines_terrain_%d_%d_mapimage.dds", width = 512, height = 512, x1 = 256, x2 = 786, y1 = 256, y2 = 768},
+  dungeon_return_deepstrikemine  = { path = "return_to_deepstrike_map_big_revealed.dds", width = 1024, height = 1024, x1 = 256, x2 = 768, y1 = 256, y2 = 768},
 
-  dungeon_deepstrikemine        = { addon="LibMap", path = "gfx/map/dungeon_deepstrikemine.png", width = 480, height = 488, x1 = 305, x2 = 785, y1 = 178, y2 = 665},
+  
   dungeon_foulcascade           = { addon="LibMap", path = "gfx/map/dungeon_foulcascade.png", width = 500, height = 447, x1 = 485, x2 = 987, y1 = 450, y2 = 1080},
   dungeon_kingsbreach           = { addon="LibMap", path = "gfx/map/dungeon_kingsbreach.png", width = 500, height = 447, x1 = 475, x2 = 1028, y1 = 505, y2 = 1037},
   dungeon_lanternhook           = { addon="LibMap", path = "gfx/map/dungeon_lanternhook.png", width = 350, height = 350, x1 = 587, x2 = 940, y1 = 472, y2 = 822},
@@ -87,11 +91,13 @@ mapData.mapData = {
   raid_frozentempest            = { addon="LibMap", path = "gfx/map/raid_frozentempest.png", width = 250, height = 500, x1 = 679, x2 = 1207, y1 = 251, y2 = 1322},
   raid_cometofahnket			      = { addon="LibMap", path = "gfx/map/raid_cometofahnket.png", width = 1632, height = 1420, x1 = 469, x2 = 1565, y1 = 356, y2 = 1308},
   
-  --hammerknell                   = { addon="LibMap", path = "gfx/map/hammerknell.png", width = 1925, height = 1039, x1 = 112, x2 = 2037, y1 = 22, y2 = 1060},
+  
   hammerknell_tiles            = { path = "hammerknell_terrain_%d_%d_mapimage.dds", width = 2048, height = 768, x1 = 0, x2 = 768, y1 = 0, y2 = 2048},
-  --greenscale                    = { addon="LibMap", path = "gfx/map/greenscaleslair.png", width = 356, height = 493, x1 = 388, x2 = 743, y1 = 245, y2 = 737},  
-
   greenscale_tiles              = { path = "greenscale_terrain_%d_%d_mapimage.dds", width = 768, height = 768, x1 = 0, x2 = 768, y1 = 0, y2 = 768},
+
+  --hammerknell                   = { addon="LibMap", path = "gfx/map/hammerknell.png", width = 1925, height = 1039, x1 = 112, x2 = 2037, y1 = 22, y2 = 1060},
+  --greenscale                    = { addon="LibMap", path = "gfx/map/greenscaleslair.png", width = 356, height = 493, x1 = 388, x2 = 743, y1 = 245, y2 = 737},  
+ 
 
   riverofsouls                  = { addon="LibMap", path = "gfx/map/riverofsouls.png", width = 500, height = 495, x1 = 392, x2 = 1008, y1 = 563, y2 = 1175},
   rhenoffate                    = { addon="LibMap", path = "gfx/map/rhenoffate.png", width = 441, height = 412, x1 = 369, x2 = 1050, y1 = 386, y2 = 1025},

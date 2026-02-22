@@ -72,12 +72,12 @@ local _zoneMapping= {
   chronicle_infernaldawn  = {"z5E4806E8B6029FA2"},
   chronicle_planebreaker  = {"z0574E9FAB61259A8"},
   chronicle_skatherran		= {"z223F978C26438CBA"},
-  chronicle_xarth			= {"z5BB72B13E2C25A14"},
-  chronicle_gedlo			= {"z12B7695EABB56864"},
-  chronicle_ashenfall		= {"z29C62C17C8FFBE46"},
+  chronicle_xarth			    = {"z5BB72B13E2C25A14"},
+  chronicle_gedlo			    = {"z12B7695EABB56864"},
+  chronicle_ashenfall		   = {"z29C62C17C8FFBE46"},
   
   dungeon_irontomb             = {"z63CDD36DF6C01849"},
-  dungeon_deepstrikemine       = {"z18968734FCBE911B"},
+  dungeon_deepstrikemine       = {"z18968734FCBE911B"},  
   dungeon_foulcascade          = {"z35DDFF1190688208"},
   dungeon_kingsbreach          = {"z327EFC0DB8BDF2C1"},
   dungeon_glacialmaw           = {"z569B28D8528D5EF3"},
@@ -103,6 +103,8 @@ local _zoneMapping= {
   dungeon_witchcircle			     = {"z7D01D8B1EE3AF5FA"},
   dungeon_themazeofsteel       = {"z56567A3CAF3F3794"},
   dungeon_templeofananke       = {"z6D32679BF5BCB74D"},
+
+  dungeon_return_deepstrikemine = {"z788F881217F2BFD0"},  
   
   shoresofterror               = {"z00000071F6B45F38"},
   
@@ -140,7 +142,7 @@ local _zoneList= {
 ,['z10D7E74AB6D7B293']={DE='Das Dendrom', EN='The Dendrome', FR='Le Rhizome', type='world', map='world2'}
 ,['z11173F9D259DAADE']={DE='Sturmbucht', EN='Tempest Bay', FR='Baie de la Tempête', type='world', map='world2'}
 ,['z1416248E485F6684']={DE='Ödlande', EN='Droughtlands', FR='Plaines Arides', type='world', map='world1'}
-,['z18968734FCBE911B']={DE='Nach Tiefschlag zurückkehren', EN='Return to Deepstrike', FR='Retour à Couprofond', type='instance', map='dungeon_deepstrikemine'}
+,['z788F881217F2BFD0']={DE='Nach Tiefschlag zurückkehren', EN='Return to Deepstrike', FR='Retour à Couprofond', type='instance', map='dungeon_deepstrikemine'}
 ,['z18968734FCBE911B']={DE='Tiefschlagmine', EN='Deepstrike Mines', FR='Mines de Couprofond', type='instance', map='dungeon_deepstrikemine'}
 ,['z196650F5AA524928']={DE='Tyrannenthron', EN='Tyrant\'s Throne', FR='Trône du Tyran', type='world', map='world3'}
 ,['z1C938C07F41C83CC']={DE='Königreich Pelladane', EN='Kingdom of Pelladane', FR='Royaume de Pelladane', type='world', map='world2'}

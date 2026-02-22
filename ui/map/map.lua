@@ -281,7 +281,12 @@ local function _uiMap(name, parent)
 				for col = 1, tileCols do
 					local x = tileX + (col - midX) * 256
 					local y = tileY + (row - midY) * 256
-					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
+					if x >= mapInfo.x1 and x < mapInfo.x2 and y >= mapInfo.y1 and y < mapInfo.y2 then
+						mapTiles[row][col]:SetVisible(true)
+						mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, x, y))
+					else
+						mapTiles[row][col]:SetVisible(false)
+					end
 				end
 			end
 		end
