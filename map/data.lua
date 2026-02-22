@@ -17,67 +17,71 @@ local SIZE_CITY = 20 -- all icons which should be visible mostly on the minimap 
 mapData.mapData = {
   unknown                 = { addon = "LibMap", path = "gfx/map/snow.png", width = 1920, height = 1080, x1 = 0, x2 = 15000, y1 = 0, y2 = 15000},
 
-  --world1                  = { path = "world_Map_Big_Revealed.dds", width = 4096, height = 2168, x1 = 0, x2 = 17415, y1 = 0, y2 = 9220},
-  --world2                  = { path = "world2_Map_Big_Revealed.dds", width = 4096, height = 3072, x1 = 0, x2 = 20480, y1 = 0, y2 = 15360},
-  --world3                  = { path = "world3_Map_Big_Revealed.dds", width = 4096, height = 4096, x1 = 0, x2 = 10232, y1 = 0, y2 = 10232},
-  --world4                  = { path = "world4_Map_Big_Revealed.dds", width = 4096, height = 4096, x1 = -2, x2 = 10235, y1 = 2, y2 = 10240},
+  -- tile system
 
   world1_tiles            = { path = "world_terrain_%d_%d_mapimage.dds", width = 4096, height = 2168, x1 = 0, x2 = 17408, y1 = 0, y2 = 9216},
   world2_tiles            = { path = "world2_terrain_%d_%d_mapimage.dds", width = 4096, height = 3072, x1 = 0, x2 = 20480, y1 = 0, y2 = 15360},
   world3_tiles            = { path = "world3_terrain_%d_%d_mapimage.dds", width = 4096, height = 3072, x1 = 0, x2 = 10240, y1 = 0, y2 = 10240},
   world4_tiles            = { path = "world3_terrain_%d_%d_mapimage.dds", width = 4096, height = 4096, x1 = 0, x2 = 10240, y1 = 0, y2 = 10240},
   
-  terminus                = { addon = "LibMap", path = "gfx/map/terminus.png", width = 746, height = 537, x1 = 395, x2 = 1107, y1 = 665, y2 = 1180},
-  mathosia                = { addon = "LibMap", path = "gfx/map/mathosia.png", width = 552, height = 605, x1 = 726, x2 = 1375, y1 = 790, y2 = 1502},
-  planetouchedw           = { addon = "LibMap", path = "gfx/map/planetouchedwilds.png", width = 1260, height = 1123, x1 = 7745, x2 = 12775, y1 = 4070, y2 = 8620},  
-  
-  wf_codex                = { path = "codex.dds", width = 256, height = 256, x1 = 435, x2 = 1075, y1 = 420, y2 = 1055}, -- done
-  wf_theblackgarden       = { path = "TheBlackGarden.dds", width = 256, height = 256, x1 = 485, x2 = 1045, y1 = 500, y2 = 1055}, -- done
-  wf_blightedantechamber  = { path = "blighted_antechamber.dds", width = 256, height = 256, x1 = 342, x2 = 793, y1 =344, y2 = 798}, -- done
-  wf_karthanridge         = { path = "Karthan_Ridge.dds", width = 256, height = 256, x1 = 505, x2 = 1130, y1 = 415, y2 = 1055}, -- done
-  wf_gharstationeyn       = { path = "Ghar_Station_Eyn.dds", width = 256, height = 256, x1 = 15, x2 = 750, y1 = 70, y2 = 795}, -- done
-  wf_whitefallsteppes     = { path = "Whitefall_Steppes.dds", width = 256, height = 256, x1 = 120, x2 = 935, y1 = 125, y2 = 930}, -- done
-  wf_battleforportscion   = { path ="portscion.dds", width = 256, height = 256, x1 = 405, x2 = 1035, y1 = 470, y2 = 1103}, -- done
-  wf_libraryofrunemasters = { path ="Library_of_Runemasters.dds", width = 256, height = 256, x1 = 253, x2 = 508, y1 = 262, y2 = 509},
-  wf_bronzetomb			      = { addon = "LibMap", path = "gfx/map/bronzetomb.png",  width = 654, height = 271, x1 = 715, x2 = 1365, y1 = 500, y2 = 775},
-    
-  --chronicle_herorises       = { addon="LibMap", path = "gfx/map/chronicle_herorises.png", width = 500, height = 442, x1 = 215, x2 = 2110, y1 = 0, y2 = 1680},
-  chronicle_herorises_tiles = { path = "chronicle_a_hero_rises_terrain_%d_%d_mapimage.dds", width = 2304, height = 1792, x1 = 0, x2 = 2304, y1 = 0, y2 = 1792},
+  -- ingame map system
 
-  chronicle_infernaldawn    = { addon="LibMap", path="gfx/map/raid_infernaldawn.png", width = 1411, height = 1186, x1 = 375, x2 = 1782, y1 = 530, y2 = 1720},
-  chronicle_planebreaker    = { addon="LibMap", path="gfx/map/planebreaker.png", width = 288, height = 500, x1 = 60, x2 = 923, y1 = 0, y2 = 1494},
-  chronicle_skatherran			= { addon="LibMap", path="gfx/map/chronicle_skatherran.png", width = 582, height = 545, x1 = 232, x2 = 725, y1 = 180, y2 = 640},
-  chronicle_xarth				    = { addon="LibMap", path="gfx/map/chronicle_xarth.png", width = 571, height = 570, x1 = 131, x2 = 801, y1 = 93, y2 = 763},
-  chronicle_gedlo				    = { addon="LibMap", path="gfx/map/chronicle_gedlo.png", width = 1013, height = 824, x1 = 5, x2 = 1205, y1 = 40, y2 = 1015},
-  chronicle_ashenfall			  = { addon="LibMap", path="gfx/map/chronicle_ashenfall.png", width = 635, height = 640, x1 = 403, x2 = 1315, y1 = 370, y2 = 1290},
-  
-  --dungeon_irontomb              = { addon="LibMap", path = "gfx/map/dungeon_irontomb.png", width = 295, height = 481, x1 = 565, x2 = 860, y1 = 728, y2 = 1210},
-  --dungeon_deepstrikemine        = { addon="LibMap", path = "gfx/map/dungeon_deepstrikemine.png", width = 480, height = 488, x1 = 305, x2 = 785, y1 = 178, y2 = 665},
-  
-  dungeon_irontomb_tiles               = { path = "iron_tomb_terrain_%d_%d_mapimage.dds", width = 512, height = 512, x1 = 512, x2 = 1024, y1 = 768, y2 = 1280},
-  --dungeon_deepstrikemine_tiles         = { path = "deepstrike_mines_terrain_%d_%d_mapimage.dds", width = 512, height = 512, x1 = 256, x2 = 786, y1 = 256, y2 = 768},
-  dungeon_return_deepstrikemine  = { path = "return_to_deepstrike_map_big_revealed.dds", width = 1024, height = 1024, x1 = 0, x2 = 1024, y1 = 0, y2 = 1024},
+  chronicle_herorises       = { path = "chronicle_a_hero_rises_map_big_revealed.dds", width = 2048, height = 1536, x1 = 0, x2 = 2048, y1 = 0, y2 = 1536},
+  chronicle_infernaldawn    = { path = "duo_infernaldawn_01_map_big_revealed.dds", width = 2560, height = 2560, x1 = 0, x2 = 2560, y1 = 0, y2 = 2560},
+  chronicle_planebreaker    = { path = "chronicle_planebreaker_01_map_big_revealed.dds", width = 1020, height = 1536, x1 = 0, x2 = 1020, y1 = 0, y2 = 1536},
+  chronicle_xarth           = { path = "xarthskull_daily_sliver_map_big_revealed.dds", width = 1024, height = 1024, x1 = 0, x2 = 1024, y1 = 0, y2 = 1024},
 
+  greenscale                = { path = "greenscale_map_big_revealed.dds", width = 1024, height = 1024, x1 = 0, x2 = 1024, y1 = 0, y2 = 1024},
+  hammerknell               = { path = "hammerknell_map_big_revealed.dds", width = 2560, height = 1280, x1 = 0, x2 = 2560, y1 = 0, y2 = 1280},
+
+  dungeon_irontomb                = { path = "iron_tomb__map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536},
+  dungeon_deepstrikemine          = { path = "deepstrike_mines_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536},
+  dungeon_foulcascade             = { path = "the_foul_cascade_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536},
+  dungeon_return_deepstrikemine   = { path = "return_to_deepstrike_map_big_revealed.dds", width = 1024, height = 1024, x1 = 0, x2 = 1024, y1 = 0, y2 = 1024},
+  dungeon_lanternhook             = { path = "lhook_map_big_revealed.dds", width = 1280, height = 1280, x1 = 0, x2 = 1280, y1 = 0, y2 = 1280},
+  dungeon_charmerscaldera         = { path = "charmers_caldera_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536},
+  dungeon_runicdescent            = { path = "runic_descent_map_big_revealed.dds", width = 2048, height = 2048, x1 = 0, x2 = 2048, y1 = 0, y2 = 2048},
+  dungeon_darkeningdeeps          = { path = "darkening_deeps_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536}, 
+  dungeon_realmofthefae           = { path = "realm_of_the_fae_map_big_revealed.dds", width = 2304, height = 2304, x1 = 0, x2 = 2304, y1 = 0, y2 = 2304}, 
+  dungeon_toweroftheshattered     = { path = "tower_shattered_map_big_revealed.dds", width = 1516, height = 1024, x1 = 0, x2 = 1516, y1 = 0, y2 = 1024}, 
+  dungeon_archiveofflesh          = { path = "archive_flesh_map_big_revealed.dds", width = 768, height = 768, x1 = 0, x2 = 768, y1 = 0, y2 = 768}, 
+  dungeon_unhallowedboneforge     = { path = "unhallowed_boneforge_map_big_revealed.dds", width = 1276, height = 1280, x1 = 0, x2 = 1276, y1 = 0, y2 = 1280}, 
+  dungeon_empyreancore            = { path = "empyrean_core_map_big_revealed.dds", width = 1272, height = 1280, x1 = 0, x2 = 1272, y1 = 0, y2 = 1280}, 
+  dungeon_gyelfortress            = { path = "gyel_fortress_map_big_revealed.dds", width = 2048, height = 2048, x1 = 0, x2 = 2048, y1 = 0, y2 = 2048}, 
+  dungeon_glacialmaw              = { path = "glacial_maw_map_big_revealed.dds", width = 1536, height = 1280, x1 = 0, x2 = 1536, y1 = 0, y2 = 1280}, 
+  dungeon_citadelofinsanity       = { path = "citadel_of_insanity_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536}, 
+
+  -- old custom texture system
+
+  terminus                      = { addon = "LibMap", path = "gfx/map/terminus.png", width = 746, height = 537, x1 = 395, x2 = 1107, y1 = 665, y2 = 1180},
+  mathosia                      = { addon = "LibMap", path = "gfx/map/mathosia.png", width = 552, height = 605, x1 = 726, x2 = 1375, y1 = 790, y2 = 1502},
+  planetouchedw                 = { addon = "LibMap", path = "gfx/map/planetouchedwilds.png", width = 1260, height = 1123, x1 = 7745, x2 = 12775, y1 = 4070, y2 = 8620},  
   
-  dungeon_foulcascade           = { addon="LibMap", path = "gfx/map/dungeon_foulcascade.png", width = 500, height = 447, x1 = 485, x2 = 987, y1 = 450, y2 = 1080},
-  dungeon_kingsbreach           = { addon="LibMap", path = "gfx/map/dungeon_kingsbreach.png", width = 500, height = 447, x1 = 475, x2 = 1028, y1 = 505, y2 = 1037},
-  dungeon_lanternhook           = { addon="LibMap", path = "gfx/map/dungeon_lanternhook.png", width = 350, height = 350, x1 = 587, x2 = 940, y1 = 472, y2 = 822},
-  dungeon_charmerscaldera       = { addon="LibMap", path = "gfx/map/dungeon_charmerscaldera.png", width = 459, height = 500, x1 = 330, x2 = 1095, y1 = 390, y2 = 1220},
+  wf_codex                      = { path = "codex.dds", width = 256, height = 256, x1 = 435, x2 = 1075, y1 = 420, y2 = 1055}, -- done
+  wf_theblackgarden             = { path = "TheBlackGarden.dds", width = 256, height = 256, x1 = 485, x2 = 1045, y1 = 500, y2 = 1055}, -- done
+  wf_blightedantechamber        = { path = "blighted_antechamber.dds", width = 256, height = 256, x1 = 342, x2 = 793, y1 =344, y2 = 798}, -- done
+  wf_karthanridge               = { path = "Karthan_Ridge.dds", width = 256, height = 256, x1 = 505, x2 = 1130, y1 = 415, y2 = 1055}, -- done
+  wf_gharstationeyn             = { path = "Ghar_Station_Eyn.dds", width = 256, height = 256, x1 = 15, x2 = 750, y1 = 70, y2 = 795}, -- done
+  wf_whitefallsteppes           = { path = "Whitefall_Steppes.dds", width = 256, height = 256, x1 = 120, x2 = 935, y1 = 125, y2 = 930}, -- done
+  wf_battleforportscion         = { path ="portscion.dds", width = 256, height = 256, x1 = 405, x2 = 1035, y1 = 470, y2 = 1103}, -- done
+  wf_libraryofrunemasters       = { path ="Library_of_Runemasters.dds", width = 256, height = 256, x1 = 253, x2 = 508, y1 = 262, y2 = 509},
+  wf_bronzetomb			            = { addon = "LibMap", path = "gfx/map/bronzetomb.png",  width = 654, height = 271, x1 = 715, x2 = 1365, y1 = 500, y2 = 775},
+   
+  chronicle_skatherran			    = { addon="LibMap", path="gfx/map/chronicle_skatherran.png", width = 582, height = 545, x1 = 232, x2 = 725, y1 = 180, y2 = 640},  
+  chronicle_gedlo				        = { addon="LibMap", path="gfx/map/chronicle_gedlo.png", width = 1013, height = 824, x1 = 5, x2 = 1205, y1 = 40, y2 = 1015},
+  chronicle_ashenfall			      = { addon="LibMap", path="gfx/map/chronicle_ashenfall.png", width = 635, height = 640, x1 = 403, x2 = 1315, y1 = 370, y2 = 1290},
+  
+  dungeon_kingsbreach           = { addon="LibMap", path = "gfx/map/dungeon_kingsbreach.png", width = 500, height = 447, x1 = 475, x2 = 1028, y1 = 505, y2 = 1037},  
   dungeon_nightmarecoast        = { addon="LibMap", path = "gfx/map/dungeon_nightmarecoast.png", width = 295, height = 500, x1 = 475, x2 = 1205, y1 = 308, y2 = 1545},
-  dungeon_abyssalprecipice      = { addon="LibMap", path = "gfx/map/dungeon_abyssalprecipice.png", width = 346, height = 499, x1 = 726, x2 = 1258, y1 = 654, y2 = 1421},
-  dungeon_runicdescent          = { addon="LibMap", path = "gfx/map/dungeon_runicdescent.png", width = 454, height = 499, x1 = 667, x2 = 1363, y1 = 734, y2 = 1498},
-  dungeon_darkeningdeeps        = { addon="LibMap", path = "gfx/map/dungeon_darkeningdeeps.png", width = 482, height = 248, x1 = 527, x2 = 1009, y1 = 556, y2 = 803},
-  dungeon_realmofthefae         = { addon="LibMap", path = "gfx/map/dungeon_realmofthefae.png", width = 420, height = 500, x1 = 943, x2 = 1495, y1 = 561, y2 = 1217},
+  dungeon_abyssalprecipice      = { addon="LibMap", path = "gfx/map/dungeon_abyssalprecipice.png", width = 346, height = 499, x1 = 726, x2 = 1258, y1 = 654, y2 = 1421},  
   dungeon_realmoftwisteddreams  = { addon="LibMap", path = "gfx/map/dungeon_realmofthefae.png", width = 420, height = 500, x1 = 686, x2 = 1238, y1 = 305, y2 = 961},
-  dungeon_stormbreakerprotocol  = { addon="LibMap", path = "gfx/map/dungeon_stormbreakerprotocol.png", width = 500, height = 271, x1 = 959, x2 = 2709, y1 = 141, y2 = 1092},
-  dungeon_toweroftheshattered   = { addon="LibMap", path = "gfx/map/dungeon_toweroftheshattered.png", width = 500, height = 250, x1 = 108, x2 = 865, y1 = 331, y2 = 705},
-  dungeon_archiveofflesh        = { addon="LibMap", path = "gfx/map/dungeon_archiveofflesh.png", width = 250, height = 250, x1 = 261, x2 = 510, y1 = 322, y2 = 573},
+  dungeon_stormbreakerprotocol  = { addon="LibMap", path = "gfx/map/dungeon_stormbreakerprotocol.png", width = 500, height = 271, x1 = 959, x2 = 2709, y1 = 141, y2 = 1092},  
   dungeon_golemfoundry          = { addon="LibMap", path = "gfx/map/dungeon_golemfoundry.dds", width = 400, height = 400, x1 = 386, x2 = 789, y1 = 440, y2 = 840},
-  dungeon_unhallowedboneforge   = { addon="LibMap", path = "gfx/map/dungeon_unhallowedboneforge.png", width = 288, height = 500, x1 = 619, x2 = 985, y1 = 424, y2 = 1060},
-  dungeon_empyreancore          = { addon="LibMap", path = "gfx/map/dungeon_empyreancore.dds", width = 400, height = 300, x1 = 87, x2 = 488, y1 = 326, y2 = 627},
-  dungeon_gyelfortress          = { addon="LibMap", path = "gfx/map/dungeon_gyelfortress.dds", width = 500, height = 500, x1 = 386, x2 = 1385, y1 = 715, y2 = 1712},
-  dungeon_glacialmaw            = { addon="LibMap", path = "gfx/map/dungeon_glacialmaw.dds", width = 500, height = 400, x1 = 210, x2 = 1208, y1 = 401, y2 = 1199},
-  dungeon_citadelofinsanity     = { addon="LibMap", path = "gfx/map/dungeon_citadelofinsanity.png", width = 362, height = 500, x1 = 169, x2 = 1104, y1 = 11, y2 = 1303},
+
+  
+  
+  
+  
   dungeon_exodusofthestormqueen = { addon="LibMap", path = "gfx/map/dungeon_exodusofthestormqueen.png", width = 359, height = 401, x1 = 540, x2 = 899, y1 = 405, y2 = 805},
   dungeon_caduceusrise          = { addon="LibMap", path = "gfx/map/dungeon_caduceusrise.png", width = 422, height = 500, x1 = 594, x2 = 1210, y1 = 857, y2 = 1586},
   dungeon_rhazadecanyons        = { addon="LibMap", path = "gfx/map/dungeon_rhazade_canyons.png", width = 565, height = 962, x1 = 653, x2 = 1781, y1 = 556, y2 = 2475},
@@ -91,14 +95,6 @@ mapData.mapData = {
   raid_frozentempest            = { addon="LibMap", path = "gfx/map/raid_frozentempest.png", width = 250, height = 500, x1 = 679, x2 = 1207, y1 = 251, y2 = 1322},
   raid_cometofahnket			      = { addon="LibMap", path = "gfx/map/raid_cometofahnket.png", width = 1632, height = 1420, x1 = 469, x2 = 1565, y1 = 356, y2 = 1308},
   
-  
-  hammerknell_tiles            = { path = "hammerknell_terrain_%d_%d_mapimage.dds", width = 2048, height = 768, x1 = 0, x2 = 768, y1 = 0, y2 = 2048},
-  greenscale_tiles              = { path = "greenscale_terrain_%d_%d_mapimage.dds", width = 768, height = 768, x1 = 0, x2 = 768, y1 = 0, y2 = 768},
-
-  --hammerknell                   = { addon="LibMap", path = "gfx/map/hammerknell.png", width = 1925, height = 1039, x1 = 112, x2 = 2037, y1 = 22, y2 = 1060},
-  --greenscale                    = { addon="LibMap", path = "gfx/map/greenscaleslair.png", width = 356, height = 493, x1 = 388, x2 = 743, y1 = 245, y2 = 737},  
- 
-
   riverofsouls                  = { addon="LibMap", path = "gfx/map/riverofsouls.png", width = 500, height = 495, x1 = 392, x2 = 1008, y1 = 563, y2 = 1175},
   rhenoffate                    = { addon="LibMap", path = "gfx/map/rhenoffate.png", width = 441, height = 412, x1 = 369, x2 = 1050, y1 = 386, y2 = 1025},
   mountsharax                   = { addon="LibMap", path = "gfx/map/mountsharax.png", width = 500, height = 739, x1 = 1220, x2 = 1932, y1 = 992, y2 = 2080},
