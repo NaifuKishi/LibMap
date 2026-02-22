@@ -56,7 +56,7 @@ mapData.mapData = {
   
   dungeon_irontomb_tiles               = { path = "iron_tomb_terrain_%d_%d_mapimage.dds", width = 512, height = 512, x1 = 512, x2 = 1024, y1 = 768, y2 = 1280},
   --dungeon_deepstrikemine_tiles         = { path = "deepstrike_mines_terrain_%d_%d_mapimage.dds", width = 512, height = 512, x1 = 256, x2 = 786, y1 = 256, y2 = 768},
-  dungeon_return_deepstrikemine  = { path = "return_to_deepstrike_map_big_revealed.dds", width = 1024, height = 1024, x1 = 256, x2 = 768, y1 = 256, y2 = 768},
+  dungeon_return_deepstrikemine  = { path = "return_to_deepstrike_map_big_revealed.dds", width = 1024, height = 1024, x1 = 0, x2 = 1024, y1 = 0, y2 = 1024},
 
   
   dungeon_foulcascade           = { addon="LibMap", path = "gfx/map/dungeon_foulcascade.png", width = 500, height = 447, x1 = 485, x2 = 987, y1 = 450, y2 = 1080},

@@ -67,6 +67,7 @@ local function _uiMap(name, parent)
 	local tileZoom = 1.0
 	local tileZoomMin = 0.5
 	local tileZoomMax = 4.0
+	local isTiled = true
 
 	local mapWidth, mapHeight
 	local maskWidth, maskHeight
@@ -128,6 +129,11 @@ local function _uiMap(name, parent)
 	centerTile = math.floor((tileRows * tileCols) / 2) + 1
 	midX = math.floor(tileCols / 2) + 1
 	midY = math.floor(tileRows / 2) + 1
+
+	local bigMap = LibEKL.UICreateFrame("nkTexture", name .. ".bigmap", map)
+	bigMap:SetPoint("TOPLEFT", map, "TOPLEFT", 0, 0)
+	bigMap:SetLayer(1)
+	bigMap:SetVisible(false)
 
 	-- Position 5x5 grid (center is tile 13)
 	mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER")
@@ -203,6 +209,11 @@ local function _uiMap(name, parent)
 		map:SetWidth(mapInfoWidth * currentScale)
 		map:SetHeight(mapInfoHeight * currentScale)
 
+		if not isTiled then
+			bigMap:SetWidth(mapInfoWidth * currentScale)
+			bigMap:SetHeight(mapInfoHeight * currentScale)
+		end
+
 		if x == nil and y == nil then
 			ui:SetCoord((mapInfo.x2 - mapInfo.x1)/2, (mapInfo.y2 - mapInfo.y1)/2)
 		else
@@ -240,6 +251,11 @@ local function _uiMap(name, parent)
 
 	end
 
+	local function _fctLoadBigMap()
+		local addon = mapInfo.addon or "Rift"
+		bigMap:SetTextureAsync(addon, mapInfo.path)
+	end
+
 	local function _fctPosition(newX, newY)
 
 		if x == newX and y == newY then return end
@@ -260,6 +276,7 @@ local function _uiMap(name, parent)
 
 	local function _fctUpdateTiles()
 
+		if not isTiled then return end
 		if coordX == nil or coordY == nil then return end
 
 		local tileX = mathFloor(coordX / 256) * 256
@@ -314,14 +331,16 @@ local function _uiMap(name, parent)
 	end
 
 	local function _applyTileZoom()
-		local size = mathFloor(256 * tileZoom)
-		for row = 1, tileRows do
-			for col = 1, tileCols do
-				mapTiles[row][col]:SetWidth(size)
-				mapTiles[row][col]:SetHeight(size)
+		if isTiled then
+			local size = mathFloor(256 * tileZoom)
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					mapTiles[row][col]:SetWidth(size)
+					mapTiles[row][col]:SetHeight(size)
+				end
 			end
+			lastTileX, lastTileY = nil, nil
 		end
-		lastTileX, lastTileY = nil, nil
 		_fctRedraw()
 
 		zoomLabel:SetText(stringFormat("%.0f%%", tileZoom * 100))
@@ -387,21 +406,35 @@ local function _uiMap(name, parent)
 
 	function ui:SetMap(activeType, mapName)
 
-		print (activeType, mapName)
-
 		if activeMap == mapName then return end
 
 		activeType = activeType
 		activeMap = mapName
 
-		mapInfo = LibMap.map.getMapData(stringFormat("%s_tiles", mapName))
-		textureMap = false 
+		local tiledInfo = LibMap.map.getMapData(stringFormat("%s_tiles", mapName))
+		if tiledInfo ~= nil then
+			isTiled = true
+			mapInfo = tiledInfo
+			bigMap:SetVisible(false)
+		else
+			local bigInfo = LibMap.map.getMapData(mapName)
+			isTiled = false
+			mapInfo = bigInfo or LibMap.map.getMapData("unknown")
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					mapTiles[row][col]:SetVisible(false)
+				end
+			end
+			bigMap:SetVisible(true)
+			_fctLoadBigMap()
+		end
 
 		scale = mapInfo.x2 / mapInfo.width
 		maximizedScale = scale
 
 		x, y = nil, nil
 		lastTileX, lastTileY = nil, nil
+		tileZoom = 1.0
 
 		_fctRedraw()
 
