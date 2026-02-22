@@ -33,6 +33,9 @@ mapData.mapData = {
 
   greenscale                = { path = "greenscale_map_big_revealed.dds", width = 1024, height = 1024, x1 = 0, x2 = 1024, y1 = 0, y2 = 1024},
   hammerknell               = { path = "hammerknell_map_big_revealed.dds", width = 2560, height = 1280, x1 = 0, x2 = 2560, y1 = 0, y2 = 1280},
+  raid_frozentempest        = { path = "frozen_tempest_map_big_revealed.dds", width = 2196, height = 2176, x1 = 0, x2 = 2196, y1 = 0, y2 = 2176}, 
+  mountsharax               = { path = "mount_sharax_map_big_revealed.dds", width = 3584, height = 3584, x1 = 0, x2 = 3584, y1 = 0, y2 = 3584}, 
+  tyrantsforge              = { path = "tyrants_forge_map_big_revealed.dds", width = 3072, height = 3072, x1 = 0, x2 = 3072, y1 = 0, y2 = 3072}, 
 
   dungeon_irontomb                = { path = "iron_tomb__map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536},
   dungeon_deepstrikemine          = { path = "deepstrike_mines_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536},
@@ -50,6 +53,10 @@ mapData.mapData = {
   dungeon_gyelfortress            = { path = "gyel_fortress_map_big_revealed.dds", width = 2048, height = 2048, x1 = 0, x2 = 2048, y1 = 0, y2 = 2048}, 
   dungeon_glacialmaw              = { path = "glacial_maw_map_big_revealed.dds", width = 1536, height = 1280, x1 = 0, x2 = 1536, y1 = 0, y2 = 1280}, 
   dungeon_citadelofinsanity       = { path = "citadel_of_insanity_map_big_revealed.dds", width = 1536, height = 1536, x1 = 0, x2 = 1536, y1 = 0, y2 = 1536}, 
+  dungeon_exodusofthestormqueen   = { path = "exodus_map_big_revealed.dds", width = 1280, height = 1280, x1 = 0, x2 = 1280, y1 = 0, y2 = 1280}, 
+  dungeon_caduceusrise            = { path = "caduceus_rise_map_big_revealed.dds", width = 2048, height = 2048, x1 = 0, x2 = 2048, y1 = 0, y2 = 2048}, 
+  dungeon_rhazadecanyons          = { path = "rhazade_canyons_map_big_revealed.dds", width = 2560, height = 2560, x1 = 0, x2 = 2560, y1 = 0, y2 = 2560}, 
+  dungeon_templeofananke          = { path = "temple_of_ananke_map_big_revealed.dds", width = 2560, height = 2560, x1 = 0, x2 = 2560, y1 = 0, y2 = 2560}, 
 
   -- old custom texture system
 
@@ -77,28 +84,15 @@ mapData.mapData = {
   dungeon_realmoftwisteddreams  = { addon="LibMap", path = "gfx/map/dungeon_realmofthefae.png", width = 420, height = 500, x1 = 686, x2 = 1238, y1 = 305, y2 = 961},
   dungeon_stormbreakerprotocol  = { addon="LibMap", path = "gfx/map/dungeon_stormbreakerprotocol.png", width = 500, height = 271, x1 = 959, x2 = 2709, y1 = 141, y2 = 1092},  
   dungeon_golemfoundry          = { addon="LibMap", path = "gfx/map/dungeon_golemfoundry.dds", width = 400, height = 400, x1 = 386, x2 = 789, y1 = 440, y2 = 840},
-
-  
-  
-  
-  
-  dungeon_exodusofthestormqueen = { addon="LibMap", path = "gfx/map/dungeon_exodusofthestormqueen.png", width = 359, height = 401, x1 = 540, x2 = 899, y1 = 405, y2 = 805},
-  dungeon_caduceusrise          = { addon="LibMap", path = "gfx/map/dungeon_caduceusrise.png", width = 422, height = 500, x1 = 594, x2 = 1210, y1 = 857, y2 = 1586},
-  dungeon_rhazadecanyons        = { addon="LibMap", path = "gfx/map/dungeon_rhazade_canyons.png", width = 565, height = 962, x1 = 653, x2 = 1781, y1 = 556, y2 = 2475},
   dungeon_witchcircle			      = { addon="LibMap", path = "gfx/map/dungeon_witchcircle.png", width = 578, height = 502, x1 = 464, x2 = 1622, y1 = 802, y2 = 1797},
   dungeon_themazeofsteel        = { addon="LibMap", path = "gfx/map/dungeon_themazeofsteel.png", width = 1133, height = 1090, x1 = 435, x2 = 855, y1 = 648, y2 = 1055},
-  dungeon_templeofananke        = { addon="LibMap", path = "gfx/map/dungeon_templeofananke.png", width = 818, height = 1147, x1 = 887, x2 = 2015, y1 = 657, y2 = 2238},
-  
+    
   shoresofterror                = { addon="LibMap", path = "gfx/map/shoresofterror.png", width = 500, height = 443, x1 = 35, x2 = 750, y1 = 105, y2 = 740},
-  mindofmadness					        = { addon="LibMap", path = "gfx/map/mindofmadness.png", width = 4480, height = 1779, x1 = 30, x2 = 7652, y1 = 37, y2 = 3085},
-  
-  raid_frozentempest            = { addon="LibMap", path = "gfx/map/raid_frozentempest.png", width = 250, height = 500, x1 = 679, x2 = 1207, y1 = 251, y2 = 1322},
+  mindofmadness					        = { addon="LibMap", path = "gfx/map/mindofmadness.png", width = 4480, height = 1779, x1 = 30, x2 = 7652, y1 = 37, y2 = 3085},    
   raid_cometofahnket			      = { addon="LibMap", path = "gfx/map/raid_cometofahnket.png", width = 1632, height = 1420, x1 = 469, x2 = 1565, y1 = 356, y2 = 1308},
   
   riverofsouls                  = { addon="LibMap", path = "gfx/map/riverofsouls.png", width = 500, height = 495, x1 = 392, x2 = 1008, y1 = 563, y2 = 1175},
-  rhenoffate                    = { addon="LibMap", path = "gfx/map/rhenoffate.png", width = 441, height = 412, x1 = 369, x2 = 1050, y1 = 386, y2 = 1025},
-  mountsharax                   = { addon="LibMap", path = "gfx/map/mountsharax.png", width = 500, height = 739, x1 = 1220, x2 = 1932, y1 = 992, y2 = 2080},
-  tyrantsforge                  = { addon="LibMap", path = "gfx/map/tyrantsforge.png", width = 620, height = 640, x1 = 860, x2 = 1971, y1 = 950, y2 = 2100},
+  rhenoffate                    = { addon="LibMap", path = "gfx/map/rhenoffate.png", width = 441, height = 412, x1 = 369, x2 = 1050, y1 = 386, y2 = 1025},    
   
   dimension_faensretreat          = { path = "dimension_bg_faens_retreat.png", width = 633, height = 242, x1 = 0, x2 = 500, y1 = 0, y2 = 500},
   dimension_hailol                = { path = "dimension_bg_hailol.png", width = 633, height = 242, x1 = 0, x2 = 500, y1 = 0, y2 = 500},
