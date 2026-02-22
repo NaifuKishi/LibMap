@@ -5,6 +5,8 @@ local addonInfo, privateVars = ...
 if not LibMap then LibMap = {} else return end
 if not LibMap.manager then LibMap.ui = {} end
 
+LibMap.defaultIconSize = 24
+
 if not LibMap.eventHandlers then LibMap.eventHandlers = {} end
 if not LibMap.events then LibMap.events = {} end
 if not LibMap.internal then LibMap.internal = {} end -- sobald nkRadial umgebaut ist das hier komplett auf internal umbauen
