@@ -68,6 +68,7 @@ local function _uiMap(name, parent)
 	local centerTile, midX, midY
 	local lastTileX, lastTileY
 	local tileZoom = 1.0
+	local maximizedTileZoom = 1.0
 	local tileZoomMin = 0.5
 	local tileZoomMax = 4.0
 	local isTiled = true
@@ -113,7 +114,7 @@ local function _uiMap(name, parent)
 	map:SetLayer(1)
 
 	local mapTiles = {}
-	local tileRows, tileCols = 5, 11
+	local tileRows, tileCols = 9, 17
 
 	-- Create 5x5 grid (25 tiles) for better coverage on large displays
 	for idx1 = 1, tileRows, 1 do
@@ -181,6 +182,23 @@ local function _uiMap(name, parent)
 
 	---------- LOCAL METHODS ----------
 
+	local function _currentTileZoom()
+		return maximized and maximizedTileZoom or tileZoom
+	end
+
+	local function _fctResizeTiles()
+		if isTiled then
+			local size = mathFloor(256 * _currentTileZoom())
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					mapTiles[row][col]:SetWidth(size)
+					mapTiles[row][col]:SetHeight(size)
+				end
+			end
+			lastTileX, lastTileY = nil, nil
+		end
+	end
+
 	local function _fctRedraw ()
 
 		local debugId
@@ -206,8 +224,7 @@ local function _uiMap(name, parent)
 			if maximized == true then maximizedScale = currentScale else scale = currentScale end
 		end
 
-		-- Tile zoom applies only in non-maximized mode
-		if not maximized then currentScale = currentScale * tileZoom end
+		currentScale = currentScale * _currentTileZoom()
 
 		map:SetWidth(mapInfoWidth * currentScale)
 		map:SetHeight(mapInfoHeight * currentScale)
@@ -288,8 +305,8 @@ local function _uiMap(name, parent)
 		local offsetX = coordX % 256
 		local offsetY = coordY % 256
 
-		local shiftX = (128 - offsetX) * tileZoom
-		local shiftY = (128 - offsetY) * tileZoom
+		local shiftX = (128 - offsetX) * _currentTileZoom()
+		local shiftY = (128 - offsetY) * _currentTileZoom()
 
 		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
@@ -347,33 +364,42 @@ local function _uiMap(name, parent)
 	end
 
 	local function _applyTileZoom()
-		if isTiled then
-			local size = mathFloor(256 * tileZoom)
-			for row = 1, tileRows do
-				for col = 1, tileCols do
-					mapTiles[row][col]:SetWidth(size)
-					mapTiles[row][col]:SetHeight(size)
-				end
-			end
-			lastTileX, lastTileY = nil, nil
-		end
+		_fctResizeTiles()
 		_fctRedraw()
 
-		zoomLabel:SetText(stringFormat("%.0f%%", tileZoom * 100))
+		zoomLabel:SetText(stringFormat("%.0f%%", _currentTileZoom() * 100))
 		zoomLabel:SetVisible(true)
 		zoomLabelHideAt = inspectTimeReal() + 1.5
 	end
 
+	local function _zoomTowardCursor()
+		if cursorCoordX == nil or cursorCoordY == nil or mapInfo == nil then return end
+		local mouse = inspectMouse()
+		local relX = mouse.x - mask:GetLeft()
+		local relY = mouse.y - mask:GetTop()
+		local pX = (cursorCoordX - mapInfo.x1) / (mapInfo.x2 - mapInfo.x1)
+		local pY = (cursorCoordY - mapInfo.y1) / (mapInfo.y2 - mapInfo.y1)
+		_fctPan(relX - pX * mapWidth, relY - pY * mapHeight)
+	end
+
 	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function()
-		if maximized then return end
-		tileZoom = math.min(tileZoom * 1.25, tileZoomMax)
+		if maximized then
+			maximizedTileZoom = math.min(maximizedTileZoom * 1.25, tileZoomMax)
+		else
+			tileZoom = math.min(tileZoom * 1.25, tileZoomMax)
+		end
 		_applyTileZoom()
+		_zoomTowardCursor()
 	end, name .. ".Wheel.Forward")
 
 	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Back, function()
-		if maximized then return end
-		tileZoom = math.max(tileZoom / 1.25, tileZoomMin)
+		if maximized then
+			maximizedTileZoom = math.max(maximizedTileZoom / 1.25, tileZoomMin)
+		else
+			tileZoom = math.max(tileZoom / 1.25, tileZoomMin)
+		end
 		_applyTileZoom()
+		_zoomTowardCursor()
 	end, name .. ".Wheel.Back")
 
 	Command.Event.Attach(Event.System.Update.Begin, function()
@@ -415,6 +441,7 @@ local function _uiMap(name, parent)
 		maskHeight = mask:GetHeight()
 		maskWidth = mask:GetWidth()
 
+		_fctResizeTiles()
 		_fctRedraw()
 
 		if internal == true then LibMap.eventHandlers[name]["Toggled"]() end
