@@ -297,12 +297,15 @@ local function _uiMap(name, parent)
 	local function _fctUpdateElements()
 		if coordsArea.x1 == nil or mapInfo == nil then return end
 
-		-- Clamp to map data bounds: elements beyond the actual tile data area
-		-- (e.g. near map edges when zoomed out) must stay hidden.
-		local cx1 = math.max(coordsArea.x1, mapInfo.x1)
-		local cy1 = math.max(coordsArea.y1, mapInfo.y1)
-		local cx2 = math.min(coordsArea.x2, mapInfo.x2)
-		local cy2 = math.min(coordsArea.y2, mapInfo.y2)
+		-- Clamp to map data bounds when available: elements beyond the actual
+		-- tile data area (e.g. near map edges when zoomed out) must stay hidden.
+		local cx1, cy1, cx2, cy2 = coordsArea.x1, coordsArea.y1, coordsArea.x2, coordsArea.y2
+		if mapInfo.x1 ~= nil then
+			cx1 = math.max(cx1, mapInfo.x1)
+			cy1 = math.max(cy1, mapInfo.y1)
+			cx2 = math.min(cx2, mapInfo.x2)
+			cy2 = math.min(cy2, mapInfo.y2)
+		end
 
 		for id, element in pairs(elements) do
 			local eleX, eleZ = element:GetCoord()
@@ -679,10 +682,13 @@ local function _uiMap(name, parent)
 		--if not duplicate then thisElement:SetVisible(true)  end
 		if coordsArea.x1 ~= nil and mapInfo ~= nil and newElement.coordX ~= nil then
 			local thisEleY = newElement.coordZ or newElement.coordY
-			local cx1 = math.max(coordsArea.x1, mapInfo.x1)
-			local cy1 = math.max(coordsArea.y1, mapInfo.y1)
-			local cx2 = math.min(coordsArea.x2, mapInfo.x2)
-			local cy2 = math.min(coordsArea.y2, mapInfo.y2)
+			local cx1, cy1, cx2, cy2 = coordsArea.x1, coordsArea.y1, coordsArea.x2, coordsArea.y2
+			if mapInfo.x1 ~= nil then
+				cx1 = math.max(cx1, mapInfo.x1)
+				cy1 = math.max(cy1, mapInfo.y1)
+				cx2 = math.min(cx2, mapInfo.x2)
+				cy2 = math.min(cy2, mapInfo.y2)
+			end
 			if thisEleY ~= nil
 			and newElement.coordX >= cx1 and newElement.coordX <= cx2
 			and thisEleY          >= cy1 and thisEleY          <= cy2 then
