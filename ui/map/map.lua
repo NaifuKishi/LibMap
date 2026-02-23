@@ -294,6 +294,23 @@ local function _uiMap(name, parent)
 
 	end
 
+	local function _fctUpdateElements()
+		if coordsArea.x1 == nil then return end
+		for id, element in pairs(elements) do
+			local eleX, eleZ = element:GetCoord()
+			if eleX ~= nil and eleZ ~= nil then
+				local radius = 0
+				if element.GetRadius and element:GetRadius() ~= nil then radius = element:GetRadius() / 2 end
+				if eleX + radius >= coordsArea.x1 and eleX - radius <= coordsArea.x2
+				and eleZ + radius >= coordsArea.y1 and eleZ - radius <= coordsArea.y2 then
+					element:SetVisible(true)
+				else
+					element:SetVisible(false)
+				end
+			end
+		end
+	end
+
 	local function _fctUpdateTiles()
 
 		if not isTiled then return end
@@ -353,7 +370,14 @@ local function _uiMap(name, parent)
 			local pY = (maskHeight / 2 - y) / mapHeight
 			coordX = mapInfo.x1 + pX * (mapInfo.x2 - mapInfo.x1)
 			coordY = mapInfo.y1 + pY * (mapInfo.y2 - mapInfo.y1)
-			_fctUpdateTiles()      -- loads new tiles into view (no-op for single-graphic)
+			_fctUpdateTiles()
+
+			local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
+			local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
+			coordsArea = { x1 = mapInfo.x1 + (-x) * xPixel, y1 = mapInfo.y1 + (-y) * yPixel }
+			coordsArea.x2 = coordsArea.x1 + maskWidth  * xPixel
+			coordsArea.y2 = coordsArea.y1 + maskHeight * yPixel
+			_fctUpdateElements()
 		end
 	end
 
@@ -530,30 +554,12 @@ local function _uiMap(name, parent)
 
 		local xPixel = (mapInfo.x2 - mapInfo.x1) / mapWidth
 		local yPixel = (mapInfo.y2 - mapInfo.y1) / mapHeight
-		
-		coordsArea = {	x1 = mapInfo.x1 + ((mask:GetLeft() - map:GetLeft()) * xPixel),
-						y1 = mapInfo.y1 + ((mask:GetTop() - map:GetTop()) * yPixel) }
-		coordsArea.x2 = coordsArea.x1 + (maskWidth * xPixel)
-		coordsArea.y2 = coordsArea.y1 + (maskHeight * xPixel)
 
-		for id, element in pairs(elements) do
+		coordsArea = { x1 = mapInfo.x1 + (-x) * xPixel, y1 = mapInfo.y1 + (-y) * yPixel }
+		coordsArea.x2 = coordsArea.x1 + maskWidth  * xPixel
+		coordsArea.y2 = coordsArea.y1 + maskHeight * yPixel
 
-			local eleX, eleZ = element:GetCoord()
-
-			if eleX ~= nil and eleZ ~= nil then
-
-				local radius = 0
-				if element.GetRadius and element:GetRadius() ~= nil then radius = element:GetRadius() / 2 end
-
-				-- Check if the element's coordinates, considering its radius, are within the coordsArea
-				if eleX + radius >= coordsArea.x1 and eleX - radius <= coordsArea.x2 and eleZ + radius >= coordsArea.y1 and eleZ - radius <= coordsArea.y2 then
-					element:SetVisible(true)
-				else
-					element:SetVisible(false)
-				end
-			end
-
-		end 
+		_fctUpdateElements()
 
 	end
 
@@ -663,7 +669,19 @@ local function _uiMap(name, parent)
 		end
 
 		--if not duplicate then thisElement:SetVisible(true)  end
-		thisElement:SetVisible(true)
+		if coordsArea.x1 ~= nil and newElement.coordX ~= nil then
+			local thisEleY = newElement.coordZ or newElement.coordY
+			local radius = 0
+			if thisEleY ~= nil
+			and newElement.coordX + radius >= coordsArea.x1 and newElement.coordX - radius <= coordsArea.x2
+			and thisEleY      + radius >= coordsArea.y1 and thisEleY      - radius <= coordsArea.y2 then
+				thisElement:SetVisible(true)
+			else
+				thisElement:SetVisible(false)
+			end
+		else
+			thisElement:SetVisible(true)
+		end
 
 		thisElement.title = newElement.title
 
