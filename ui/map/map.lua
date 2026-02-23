@@ -68,7 +68,6 @@ local function _uiMap(name, parent)
 	local centerTile, midX, midY
 	local lastTileX, lastTileY
 	local tileZoom = 1.0
-	local maximizedTileZoom = 1.0
 	local tileZoomMin = 0.5
 	local tileZoomMax = 4.0
 	local isTiled = true
@@ -183,7 +182,7 @@ local function _uiMap(name, parent)
 	---------- LOCAL METHODS ----------
 
 	local function _currentTileZoom()
-		return maximized and maximizedTileZoom or tileZoom
+		return tileZoom
 	end
 
 	local function _fctResizeTiles()
@@ -342,30 +341,29 @@ local function _uiMap(name, parent)
 
 		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
-		if tileX ~= lastTileX or tileY ~= lastTileY then
-			lastTileX = tileX
-			lastTileY = tileY
+		-- Always update tiles when called, as panning can reveal new tiles even on the same base tile
+		lastTileX = tileX
+		lastTileY = tileY
 
-			-- Visible tile range: center tile left/top edge in mask-relative px
-			local cLeft = maskWidth  / 2 + shiftX - halfTile
-			local cTop  = maskHeight / 2 + shiftY - halfTile
-			local minCol = mathMax(1,        mathFloor(midX - cLeft / tileSize))
-			local maxCol = math.min(tileCols, math.ceil(midX + (maskWidth  - cLeft) / tileSize) - 1)
-			local minRow = mathMax(1,        mathFloor(midY - cTop  / tileSize))
-			local maxRow = math.min(tileRows, math.ceil(midY + (maskHeight - cTop)  / tileSize) - 1)
+		-- Visible tile range: center tile left/top edge in mask-relative px
+		local cLeft = maskWidth  / 2 + shiftX - halfTile
+		local cTop  = maskHeight / 2 + shiftY - halfTile
+		local minCol = mathMax(1,        mathFloor(midX - cLeft / tileSize))
+		local maxCol = math.min(tileCols, math.ceil(midX + (maskWidth  - cLeft) / tileSize) - 1)
+		local minRow = mathMax(1,        mathFloor(midY - cTop  / tileSize))
+		local maxRow = math.min(tileRows, math.ceil(midY + (maskHeight - cTop)  / tileSize) - 1)
 
-			for row = 1, tileRows do
-				for col = 1, tileCols do
-					local wx = tileX + (col - midX) * 256
-					local wy = tileY + (row - midY) * 256
-					if row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
-					and wx >= mapInfo.x1 and wx < mapInfo.x2
-					and wy >= mapInfo.y1 and wy < mapInfo.y2 then
-						mapTiles[row][col]:SetVisible(true)
-						mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, wx, wy))
-					else
-						mapTiles[row][col]:SetVisible(false)
-					end
+		for row = 1, tileRows do
+			for col = 1, tileCols do
+				local wx = tileX + (col - midX) * 256
+				local wy = tileY + (row - midY) * 256
+				if row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
+				and wx >= mapInfo.x1 and wx < mapInfo.x2
+				and wy >= mapInfo.y1 and wy < mapInfo.y2 then
+					mapTiles[row][col]:SetVisible(true)
+					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, wx, wy))
+				else
+					mapTiles[row][col]:SetVisible(false)
 				end
 			end
 		end
@@ -432,23 +430,19 @@ local function _uiMap(name, parent)
 	end
 
 	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Forward, function()
-		if maximized then
-			maximizedTileZoom = math.min(maximizedTileZoom * 1.25, tileZoomMax)
-		else
+		if not maximized then
 			tileZoom = math.min(tileZoom * 1.25, tileZoomMax)
+			_applyTileZoom()
+			_zoomTowardCursor()
 		end
-		_applyTileZoom()
-		_zoomTowardCursor()
 	end, name .. ".Wheel.Forward")
 
 	mask:EventAttach(Event.UI.Input.Mouse.Wheel.Back, function()
-		if maximized then
-			maximizedTileZoom = math.max(maximizedTileZoom / 1.25, tileZoomMin)
-		else
+		if not maximized then
 			tileZoom = math.max(tileZoom / 1.25, tileZoomMin)
+			_applyTileZoom()
+			_zoomTowardCursor()
 		end
-		_applyTileZoom()
-		_zoomTowardCursor()
 	end, name .. ".Wheel.Back")
 
 	Command.Event.Attach(Event.System.Update.Begin, function()
