@@ -295,14 +295,22 @@ local function _uiMap(name, parent)
 	end
 
 	local function _fctUpdateElements()
-		if coordsArea.x1 == nil then return end
+		if coordsArea.x1 == nil or mapInfo == nil then return end
+
+		-- Clamp to map data bounds: elements beyond the actual tile data area
+		-- (e.g. near map edges when zoomed out) must stay hidden.
+		local cx1 = math.max(coordsArea.x1, mapInfo.x1)
+		local cy1 = math.max(coordsArea.y1, mapInfo.y1)
+		local cx2 = math.min(coordsArea.x2, mapInfo.x2)
+		local cy2 = math.min(coordsArea.y2, mapInfo.y2)
+
 		for id, element in pairs(elements) do
 			local eleX, eleZ = element:GetCoord()
 			if eleX ~= nil and eleZ ~= nil then
 				local radius = 0
 				if element.GetRadius and element:GetRadius() ~= nil then radius = element:GetRadius() / 2 end
-				if eleX + radius >= coordsArea.x1 and eleX - radius <= coordsArea.x2
-				and eleZ + radius >= coordsArea.y1 and eleZ - radius <= coordsArea.y2 then
+				if eleX + radius >= cx1 and eleX - radius <= cx2
+				and eleZ + radius >= cy1 and eleZ - radius <= cy2 then
 					element:SetVisible(true)
 				else
 					element:SetVisible(false)
@@ -669,12 +677,15 @@ local function _uiMap(name, parent)
 		end
 
 		--if not duplicate then thisElement:SetVisible(true)  end
-		if coordsArea.x1 ~= nil and newElement.coordX ~= nil then
+		if coordsArea.x1 ~= nil and mapInfo ~= nil and newElement.coordX ~= nil then
 			local thisEleY = newElement.coordZ or newElement.coordY
-			local radius = 0
+			local cx1 = math.max(coordsArea.x1, mapInfo.x1)
+			local cy1 = math.max(coordsArea.y1, mapInfo.y1)
+			local cx2 = math.min(coordsArea.x2, mapInfo.x2)
+			local cy2 = math.min(coordsArea.y2, mapInfo.y2)
 			if thisEleY ~= nil
-			and newElement.coordX + radius >= coordsArea.x1 and newElement.coordX - radius <= coordsArea.x2
-			and thisEleY      + radius >= coordsArea.y1 and thisEleY      - radius <= coordsArea.y2 then
+			and newElement.coordX >= cx1 and newElement.coordX <= cx2
+			and thisEleY          >= cy1 and thisEleY          <= cy2 then
 				thisElement:SetVisible(true)
 			else
 				thisElement:SetVisible(false)
