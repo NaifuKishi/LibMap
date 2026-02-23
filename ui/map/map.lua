@@ -114,9 +114,9 @@ local function _uiMap(name, parent)
 	map:SetLayer(1)
 
 	local mapTiles = {}
-	local tileRows, tileCols = 9, 17
+	local tileRows, tileCols = 7, 9
 
-	-- Create 5x5 grid (25 tiles) for better coverage on large displays
+	-- 7x9 grid (63 tiles): covers 800x600 mask at minimum tileZoom (0.5, tileSize=128px)
 	for idx1 = 1, tileRows, 1 do
 		local rows = {}
 
@@ -128,14 +128,6 @@ local function _uiMap(name, parent)
 		end
 
 		table.insert(mapTiles, rows)
-	end
-
-	-- Per-tile visibility state cache — avoids redundant SetVisible API calls
-	local tileVisState = {}
-	for _r = 1, tileRows do
-		local row = {}
-		for _c = 1, tileCols do row[_c] = false end
-		tileVisState[_r] = row
 	end
 
 	centerTile = math.floor((tileRows * tileCols) / 2) + 1
@@ -201,7 +193,6 @@ local function _uiMap(name, parent)
 				for col = 1, tileCols do
 					mapTiles[row][col]:SetWidth(size)
 					mapTiles[row][col]:SetHeight(size)
-					tileVisState[row][col] = false
 				end
 			end
 			lastTileX, lastTileY = nil, nil
@@ -323,41 +314,28 @@ local function _uiMap(name, parent)
 
 		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
-		-- Analytically compute which rows/cols overlap the mask viewport.
-		-- cLeft/cTop = left/top edge of the center tile in mask-relative coords.
-		local cLeft = maskWidth  / 2 + shiftX - halfTile
-		local cTop  = maskHeight / 2 + shiftY - halfTile
-
-		local minCol = mathMax(1,        mathFloor(midX - cLeft / tileSize))
-		local maxCol = math.min(tileCols, math.ceil(midX + (maskWidth  - cLeft) / tileSize) - 1)
-		local minRow = mathMax(1,        mathFloor(midY - cTop  / tileSize))
-		local maxRow = math.min(tileRows, math.ceil(midY + (maskHeight - cTop)  / tileSize) - 1)
-
-		local textureChanged = tileX ~= lastTileX or tileY ~= lastTileY
-		if textureChanged then
+		if tileX ~= lastTileX or tileY ~= lastTileY then
 			lastTileX = tileX
 			lastTileY = tileY
-		end
 
-		for row = 1, tileRows do
-			for col = 1, tileCols do
-				local inMask = row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
-				local wx = tileX + (col - midX) * 256
-				local wy = tileY + (row - midY) * 256
-				local show = inMask and wx >= mapInfo.x1 and wx < mapInfo.x2
-				                    and wy >= mapInfo.y1 and wy < mapInfo.y2
+			-- Visible tile range: center tile left/top edge in mask-relative px
+			local cLeft = maskWidth  / 2 + shiftX - halfTile
+			local cTop  = maskHeight / 2 + shiftY - halfTile
+			local minCol = mathMax(1,        mathFloor(midX - cLeft / tileSize))
+			local maxCol = math.min(tileCols, math.ceil(midX + (maskWidth  - cLeft) / tileSize) - 1)
+			local minRow = mathMax(1,        mathFloor(midY - cTop  / tileSize))
+			local maxRow = math.min(tileRows, math.ceil(midY + (maskHeight - cTop)  / tileSize) - 1)
 
-				if show then
-					if not tileVisState[row][col] then
-						tileVisState[row][col] = true
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					local wx = tileX + (col - midX) * 256
+					local wy = tileY + (row - midY) * 256
+					if row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
+					and wx >= mapInfo.x1 and wx < mapInfo.x2
+					and wy >= mapInfo.y1 and wy < mapInfo.y2 then
 						mapTiles[row][col]:SetVisible(true)
-					end
-					if textureChanged then
 						mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, wx, wy))
-					end
-				else
-					if tileVisState[row][col] then
-						tileVisState[row][col] = false
+					else
 						mapTiles[row][col]:SetVisible(false)
 					end
 				end
@@ -514,9 +492,6 @@ local function _uiMap(name, parent)
 		x, y = nil, nil
 		lastTileX, lastTileY = nil, nil
 		tileZoom = 1.0
-		for row = 1, tileRows do
-			for col = 1, tileCols do tileVisState[row][col] = false end
-		end
 
 		_fctRedraw()
 
