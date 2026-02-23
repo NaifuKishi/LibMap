@@ -41,6 +41,9 @@ local function _uiMap(name, parent)
 	local scale = nil
 	--local scaleStep = nil
 	local x, y
+	local dragActive = false
+	local dragStartCursorX, dragStartCursorY = 0, 0
+	local dragStartMapX, dragStartMapY = 0, 0
 	local mouseData = nil
 	local coordX, coordY = 0, 0
 	local elements = {}
@@ -308,6 +311,19 @@ local function _uiMap(name, parent)
 			end
 		end
 
+	end
+
+	local function _fctPan(newX, newY)
+		_fctPosition(newX, newY)   -- moves map frame + clamps; updates x, y
+
+		-- Back-calculate world coords from new frame position (needed for tile refresh)
+		if mapInfo ~= nil then
+			local pX = (maskWidth / 2 - x) / mapWidth
+			local pY = (maskHeight / 2 - y) / mapHeight
+			coordX = mapInfo.x1 + pX * (mapInfo.x2 - mapInfo.x1)
+			coordY = mapInfo.y1 + pY * (mapInfo.y2 - mapInfo.y1)
+			_fctUpdateTiles()      -- loads new tiles into view (no-op for single-graphic)
+		end
 	end
 
 	local function _fctProcessWayPoint ()
@@ -775,9 +791,28 @@ local function _uiMap(name, parent)
 		
 	end, name .. '.window.Resized')
 
-	mask:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function (self, _, x, y)
-		_fctUpdateCoord(x, y)
+	mask:EventAttach(Event.UI.Input.Mouse.Cursor.Move, function (self, _, curX, curY)
+		if dragActive then
+			local deltaX = curX - dragStartCursorX
+			local deltaY = curY - dragStartCursorY
+			_fctPan(dragStartMapX + deltaX, dragStartMapY + deltaY)
+		else
+			_fctUpdateCoord(curX, curY)
+		end
 	end, name .. ".mask.Cursor.Move")
+
+	mask:EventAttach(Event.UI.Input.Mouse.Left.Down, function()
+		local mouse = inspectMouse()
+		dragActive = true
+		dragStartCursorX = mouse.x
+		dragStartCursorY = mouse.y
+		dragStartMapX = x or 0
+		dragStartMapY = y or 0
+	end, name .. ".mask.Left.Down")
+
+	mask:EventAttach(Event.UI.Input.Mouse.Left.Up, function()
+		dragActive = false
+	end, name .. ".mask.Left.Up")
 
 	mask:EventAttach(Event.UI.Input.Mouse.Cursor.Out, function ()
 		coordLabel:SetText(stringFormat("%d / %d", coordX, coordY))
