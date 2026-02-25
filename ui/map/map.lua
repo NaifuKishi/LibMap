@@ -699,7 +699,12 @@ local function _uiMap(name, parent)
 
 		if newElement.radius ~= nil then thisElement:SetRadius(newElement.radius) end
 		thisElement:SetType(newElement.type)
-		
+
+		-- Apply alpha/opacity for historic/tracked resources (distinguishes from live resources)
+		if newElement.alpha ~= nil and thisElement.SetColor ~= nil then
+			thisElement:SetColor(1, 1, 1, newElement.alpha)
+		end
+
 		if newElement.type ~= "UNIT.PLAYER" then
 			thisElement:SetToolTip(newElement.title, newElement.descList)
 		end
