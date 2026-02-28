@@ -47,8 +47,10 @@ local function _uiMap(name, parent)
 	local dragStartMapX, dragStartMapY = 0, 0
 	local mouseData = nil
 	local coordX, coordY = 0, 0
+	local coordXPrecise, coordYPrecise = 0, 0
 	local elements = {}
 	local checkIdentical = {}
+	local elementToCheckKey = {}
 	local maximized = false
 	local maximizedX, maximizedY = 1, 1
 	local maximizedScale = 1
@@ -59,6 +61,7 @@ local function _uiMap(name, parent)
 	local maxZoom = 6
 	local cursorX, cursorY
 	local coordsArea = {}
+	local elementsDirty = false
 	local waypoint = nil
 	local cursorCoordX, cursorCoordY
 	local animated = true
@@ -121,10 +124,10 @@ local function _uiMap(name, parent)
 		local rows = {}
 
 		for idx2 = 1, tileCols, 1 do
-			local thisMap = LibEKL.UICreateFrame("nkTexture", stringFormat("%s.map.%dx%d", name, idx1, idx2), mask)
+			local thisMap = LibEKL.UICreateFrame("nkTexture", stringFormat("%s.map.%dx%d", name, idx1, idx2), mask)			
 			thisMap:SetLayer(1)
 			thisMap:SetMouseMasking("limited")
-			table.insert(rows, thisMap)
+			table.insert(rows, { map = thisMap, texture = "", visible = false} )
 		end
 
 		table.insert(mapTiles, rows)
@@ -140,22 +143,22 @@ local function _uiMap(name, parent)
 	bigMap:SetVisible(false)
 
 	-- Position 5x5 grid (center is tile 13)
-	mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER")
+	mapTiles[midY][midX].map:SetPoint("CENTER", mask, "CENTER")
 
 	for row = 1, tileRows, 1 do
 		local thisRow = mapTiles[row]
 
 		for col = 1, tileCols, 1 do
-			local thisTile = thisRow[col]			
+			local thisTile = thisRow[col].map
 
 			if col < midX then
-				thisTile:SetPoint("CENTERRIGHT", thisRow[col+1], "CENTERLEFT")
+				thisTile:SetPoint("CENTERRIGHT", thisRow[col+1].map, "CENTERLEFT")
 			elseif col > midX then
-				thisTile:SetPoint("CENTERLEFT", thisRow[col-1], "CENTERRIGHT")
+				thisTile:SetPoint("CENTERLEFT", thisRow[col-1].map, "CENTERRIGHT")
 			elseif row < midY then
-				thisTile:SetPoint("CENTERBOTTOM", mapTiles[row+1][col], "CENTERTOP")
+				thisTile:SetPoint("CENTERBOTTOM", mapTiles[row+1][col].map, "CENTERTOP")
 			elseif row > midY then
-				thisTile:SetPoint("CENTERTOP", mapTiles[row-1][col], "CENTERBOTTOM")
+				thisTile:SetPoint("CENTERTOP", mapTiles[row-1][col].map, "CENTERBOTTOM")
 			end
 		end
 	end
@@ -198,8 +201,8 @@ local function _uiMap(name, parent)
 			local size = mathFloor(256 * _currentTileZoom())
 			for row = 1, tileRows do
 				for col = 1, tileCols do
-					mapTiles[row][col]:SetWidth(size)
-					mapTiles[row][col]:SetHeight(size)
+					mapTiles[row][col].map:SetWidth(size)
+					mapTiles[row][col].map:SetHeight(size)
 				end
 			end
 			lastTileX, lastTileY = nil, nil
@@ -256,6 +259,8 @@ local function _uiMap(name, parent)
 
 	end
 
+	local _lastCursorCoordX, _lastCursorCoordY
+
 	local function _fctUpdateCoord(cursorX, cursorY)
 
 		local debugId
@@ -269,6 +274,13 @@ local function _uiMap(name, parent)
 
 		cursorCoordX = mathFloor(((mapInfoX2 - mapInfoX1) * xP) + mapInfoX1)
 		cursorCoordY = mathFloor(((mapInfoY2 - mapInfoY1) * yP) + mapInfoY1)
+
+		if cursorCoordX == _lastCursorCoordX and cursorCoordY == _lastCursorCoordY then
+			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "_fctUpdateCoord", debugId) end
+			return
+		end
+		_lastCursorCoordX = cursorCoordX
+		_lastCursorCoordY = cursorCoordY
 
 		local coordText = stringFormat("%d / %d", cursorCoordX, cursorCoordY)
 		coordLabel:SetText(coordText)
@@ -347,7 +359,7 @@ local function _uiMap(name, parent)
 		local shiftX = (128 - offsetX) * zoom
 		local shiftY = (128 - offsetY) * zoom
 
-		mapTiles[midY][midX]:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
+		mapTiles[midY][midX].map:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
 		-- Always update tiles when called, as panning can reveal new tiles even on the same base tile
 		lastTileX = tileX
@@ -368,11 +380,30 @@ local function _uiMap(name, parent)
 				if row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
 				and wx >= mapInfoX1 and wx < mapInfoX2
 				and wy >= mapInfoY1 and wy < mapInfoY2 then
-					mapTiles[row][col]:SetVisible(true)
-					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, wx, wy))
+					local thisTile = mapTiles[row][col]
+
+					if not thisTile.visible then 
+						thisTile.map:SetVisible(true) 
+						mapTiles[row][col].visible = true
+					end
+
+					local textureName = stringFormat(mapInfo.path, wx, wy)
+					if thisTile.texture ~= textureName then
+						thisTile.map:SetTextureAsync("Rift", textureName)
+						mapTiles[row][col].texture = textureName
+					end
+
+					--print ("set", mapTiles[row][col].visible, mapTiles[row][col].texture)
 				else
-					mapTiles[row][col]:SetVisible(false)
-				end
+					local thisTile = mapTiles[row][col]
+
+					if thisTile.visible then
+						thisTile.map:SetVisible(false)
+						mapTiles[row][col].visible = false
+					end
+
+					--print ("no set", mapTiles[row][col].visible, mapTiles[row][col].texture)
+				end				
 			end
 		end
 
@@ -455,6 +486,10 @@ local function _uiMap(name, parent)
 	end, name .. ".Wheel.Back")
 
 	Command.Event.Attach(Event.System.Update.Begin, function()
+		if elementsDirty then
+			elementsDirty = false
+			_fctUpdateElements()
+		end
 		if zoomLabel:GetVisible() and inspectTimeReal() >= zoomLabelHideAt then
 			zoomLabel:SetVisible(false)
 		end
@@ -517,7 +552,7 @@ local function _uiMap(name, parent)
 			mapInfo = bigInfo or LibMap.map.getMapData("unknown")
 			for row = 1, tileRows do
 				for col = 1, tileCols do
-					mapTiles[row][col]:SetVisible(false)
+					mapTiles[row][col].map:SetVisible(false)
 				end
 			end
 			bigMap:SetVisible(true)
@@ -541,6 +576,12 @@ local function _uiMap(name, parent)
 	end
 
 	function ui:SetCoord (newCoordX, newCoordY)
+
+		if newCoordX ~= nil then coordXPrecise = newCoordX end
+		if newCoordY ~= nil then coordYPrecise = newCoordY end
+
+		if newCoordX ~= nil then newCoordX = mathFloor(newCoordX) end
+		if newCoordY ~= nil then newCoordY = mathFloor(newCoordY) end
 
 		if coordX == newCoordX and coordY == newCoordY then return end
 
@@ -575,7 +616,7 @@ local function _uiMap(name, parent)
 		coordsArea.x2 = coordsArea.x1 + maskWidth  * xPixel
 		coordsArea.y2 = coordsArea.y1 + maskHeight * yPixel
 
-		_fctUpdateElements()
+		elementsDirty = true
 
 	end
 
@@ -618,10 +659,11 @@ local function _uiMap(name, parent)
 		-- check if the exact same map identicator is found at exact the same position
 		-- this happens for example if you can return more than one quests to the same quest giver
 
-		local checkKey = tostring(newElement.coordX) .. tostring(newElement.coordY) .. tostring(newElement.coordZ) .. tostring(newElement.type)
+		local checkKey = stringFormat("%s:%s:%s:%s", newElement.coordX or "", newElement.coordY or "", newElement.coordZ or "", newElement.type or "")
 		
 		if checkIdentical[checkKey] ~= nil and #checkIdentical[checkKey] > 0 then
 			table.insert(checkIdentical[checkKey], newElement.id)
+			elementToCheckKey[newElement.id] = checkKey
 			duplicate = true
 		else
 			checkIdentical[checkKey] = {}
@@ -633,6 +675,7 @@ local function _uiMap(name, parent)
 		end
 
 		table.insert(checkIdentical[checkKey], newElement.id)
+		elementToCheckKey[newElement.id] = checkKey
 
 		local thisElement
 		local mapInfo = mapData.mapElements[newElement.type]
@@ -767,6 +810,7 @@ local function _uiMap(name, parent)
 		end
 
 		checkIdentical = {}
+		elementToCheckKey = {}
 
 	end
 
@@ -779,11 +823,12 @@ local function _uiMap(name, parent)
 
 		local thisElement = elements[removeElement]
 
-		for id, details in pairs(checkIdentical) do
-			if LibEKL.Tools.Table.IsMember(details, removeElement) then
-				local pos = LibEKL.Tools.Table.GetTablePos (details, removeElement)
-				table.remove(details, pos)
-				checkIdentical[id] = details
+		local checkKey = elementToCheckKey[removeElement]
+		if checkKey ~= nil then
+			local details = checkIdentical[checkKey]
+			if details ~= nil then
+				local pos = LibEKL.Tools.Table.GetTablePos(details, removeElement)
+				if pos ~= -1 then table.remove(details, pos) end
 
 				if thisElement:GetVisible() == true and #details > 0 then
 					for k, v in pairs(details) do
@@ -793,10 +838,8 @@ local function _uiMap(name, parent)
 						end
 					end
 				end
-
-				break
 			end
-		
+			elementToCheckKey[removeElement] = nil
 		end
 
 		if thisElement:GetTooltip() == true then tooltip:SetVisible(false) end
@@ -843,7 +886,7 @@ local function _uiMap(name, parent)
 	function ui:GetMapName() return activeMap end
 	function ui:GetMask() return mask end
 	function ui:GetTooltip() return tooltip end
-	function ui:GetCoords() return coordX, coordY end
+	function ui:GetCoords() return coordXPrecise, coordYPrecise end
 	function ui:GetElement(key) return elements[key] end
 	function ui:SetSmoothScroll(flag) smoothScroll = flag end
 	function ui:GetAnimationSpeed() return animationSpeed end
