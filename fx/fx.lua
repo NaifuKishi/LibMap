@@ -15,11 +15,13 @@ local mathRad = math.rad
 ---------- init local variables ---------
 
 local _fxStore = {}
+local _fxCount = 0
 
 ---------- library public function block ---------
 
 function LibMap.fx.register (id, frame, effect)
 
+	if _fxStore[id] == nil then _fxCount = _fxCount + 1 end
 	_fxStore[id] = { frame = frame, effect = effect }
 	_fxStore[id].lastUpdate = InspectTimeReal()
 
@@ -35,11 +37,12 @@ function LibMap.fx.update (id, effect)
   
 end
 
-function LibMap.fx.cancel (id) 
+function LibMap.fx.cancel (id)
 
 	if not _fxStore or not id or not _fxStore[id] then return end
-	_fxStore[id] = nil 
-	
+	_fxStore[id] = nil
+	if _fxCount > 0 then _fxCount = _fxCount - 1 end
+
 end
 
 function LibMap.fx.updateTime (id)
@@ -59,7 +62,9 @@ end
 
 function internal.processFX()
 
-	local debugId  
+	if _fxCount == 0 then return end
+
+	local debugId
 	if nkDebug then debugId = nkDebug.traceStart (InspectAddonCurrent(), "LibMap internal.processFX") end
 
 	local now = InspectTimeReal()
@@ -71,8 +76,8 @@ function internal.processFX()
 		if details.frame:GetVisible() then
 
 			if _fxStore[id].lastUpdate ~= nil then				
-				if details.effect.id == "rotateCanvas" then					
-					if now - _fxStore[id].lastUpdate > (details.effect.speed or 1) and details.frame:GetVisible() == true then
+				if details.effect.id == "rotateCanvas" then
+					if now - _fxStore[id].lastUpdate > (details.effect.speed or 1) then
 						_fxStore[id].lastUpdate = now
 						if details.angle == nil then details.angle = 0 else details.angle = details.angle + 1 end
 						details.effect.fill.transform = LibEKL.Tools.Gfx.Rotate(details.frame, mathRad(details.angle), (details.effect.scale or 1))						
