@@ -38,6 +38,7 @@ local function _uiMap(name, parent)
 	local activeMap = nil;
 	local activeType = nil;
 	local mapInfo = nil
+	local mapInfoX1, mapInfoX2, mapInfoY1, mapInfoY2 = 0, 0, 0, 0
 	local scale = nil
 	--local scaleStep = nil
 	local x, y
@@ -185,6 +186,13 @@ local function _uiMap(name, parent)
 		return tileZoom
 	end
 
+	local function _updateMapInfoCache()
+		mapInfoX1 = tonumber(mapInfo.x1) or 0
+		mapInfoX2 = tonumber(mapInfo.x2) or 0
+		mapInfoY1 = tonumber(mapInfo.y1) or 0
+		mapInfoY2 = tonumber(mapInfo.y2) or 0
+	end
+
 	local function _fctResizeTiles()
 		if isTiled then
 			local size = mathFloor(256 * _currentTileZoom())
@@ -234,12 +242,7 @@ local function _uiMap(name, parent)
 		end
 
 		if x == nil and y == nil then
-			-- Ensure mapInfo coordinates are numbers for mathematical operations
-			local mapX1 = tonumber(mapInfo.x1) or 0
-			local mapX2 = tonumber(mapInfo.x2) or 0
-			local mapY1 = tonumber(mapInfo.y1) or 0
-			local mapY2 = tonumber(mapInfo.y2) or 0
-			ui:SetCoord((mapX2 - mapX1)/2, (mapY2 - mapY1)/2)
+			ui:SetCoord((mapInfoX2 - mapInfoX1)/2, (mapInfoY2 - mapInfoY1)/2)
 		else
 			ui:SetCoord()
 		end
@@ -264,14 +267,8 @@ local function _uiMap(name, parent)
 		local xP = 1 / mapWidth * diffX
 		local yP = 1 / mapHeight * diffY
 
-		-- Ensure mapInfo coordinates are numbers for mathematical operations
-		local mapX1 = tonumber(mapInfo.x1) or 0
-		local mapX2 = tonumber(mapInfo.x2) or 0
-		local mapY1 = tonumber(mapInfo.y1) or 0
-		local mapY2 = tonumber(mapInfo.y2) or 0
-
-		cursorCoordX = mathFloor(((mapX2 - mapX1) * xP) + mapX1)
-		cursorCoordY = mathFloor(((mapY2 - mapY1) * yP) + mapY1)
+		cursorCoordX = mathFloor(((mapInfoX2 - mapInfoX1) * xP) + mapInfoX1)
+		cursorCoordY = mathFloor(((mapInfoY2 - mapInfoY1) * yP) + mapInfoY1)
 
 		local coordText = stringFormat("%d / %d", cursorCoordX, cursorCoordY)
 		coordLabel:SetText(coordText)
@@ -311,16 +308,10 @@ local function _uiMap(name, parent)
 		-- tile data area (e.g. near map edges when zoomed out) must stay hidden.
 		local cx1, cy1, cx2, cy2 = coordsArea.x1, coordsArea.y1, coordsArea.x2, coordsArea.y2
 		if mapInfo.x1 ~= nil then
-			-- Ensure mapInfo coordinates are numbers for mathematical operations
-			local mapX1 = tonumber(mapInfo.x1) or cx1
-			local mapY1 = tonumber(mapInfo.y1) or cy1
-			local mapX2 = tonumber(mapInfo.x2) or cx2
-			local mapY2 = tonumber(mapInfo.y2) or cy2
-			
-			cx1 = math.max(cx1, mapX1)
-			cy1 = math.max(cy1, mapY1)
-			cx2 = math.min(cx2, mapX2)
-			cy2 = math.min(cy2, mapY2)
+			cx1 = math.max(cx1, mapInfoX1)
+			cy1 = math.max(cy1, mapInfoY1)
+			cx2 = math.min(cx2, mapInfoX2)
+			cy2 = math.min(cy2, mapInfoY2)
 		end
 
 		for id, element in pairs(elements) do
@@ -374,14 +365,9 @@ local function _uiMap(name, parent)
 			for col = 1, tileCols do
 				local wx = tileX + (col - midX) * 256
 				local wy = tileY + (row - midY) * 256
-				-- Ensure mapInfo coordinates are numbers for comparison
-				local mapX1 = tonumber(mapInfo.x1) or 0
-				local mapX2 = tonumber(mapInfo.x2) or 0
-				local mapY1 = tonumber(mapInfo.y1) or 0
-				local mapY2 = tonumber(mapInfo.y2) or 0
 				if row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
-				and wx >= mapX1 and wx < mapX2
-				and wy >= mapY1 and wy < mapY2 then
+				and wx >= mapInfoX1 and wx < mapInfoX2
+				and wy >= mapInfoY1 and wy < mapInfoY2 then
 					mapTiles[row][col]:SetVisible(true)
 					mapTiles[row][col]:SetTextureAsync("Rift", stringFormat(mapInfo.path, wx, wy))
 				else
@@ -399,19 +385,14 @@ local function _uiMap(name, parent)
 		if mapInfo ~= nil then
 			local pX = (maskWidth / 2 - x) / mapWidth
 			local pY = (maskHeight / 2 - y) / mapHeight
-			-- Ensure mapInfo coordinates are numbers for mathematical operations
-			local mapX1 = tonumber(mapInfo.x1) or 0
-			local mapX2 = tonumber(mapInfo.x2) or 0
-			local mapY1 = tonumber(mapInfo.y1) or 0
-			local mapY2 = tonumber(mapInfo.y2) or 0
-			
-			coordX = mapX1 + pX * (mapX2 - mapX1)
-			coordY = mapY1 + pY * (mapY2 - mapY1)
+			coordX = mapInfoX1 + pX * (mapInfoX2 - mapInfoX1)
+			coordY = mapInfoY1 + pY * (mapInfoY2 - mapInfoY1)
 			_fctUpdateTiles()
 
-			local xPixel = (mapX2 - mapX1) / mapWidth
-			local yPixel = (mapY2 - mapY1) / mapHeight
-			coordsArea = { x1 = mapX1 + (-x) * xPixel, y1 = mapY1 + (-y) * yPixel }
+			local xPixel = (mapInfoX2 - mapInfoX1) / mapWidth
+			local yPixel = (mapInfoY2 - mapInfoY1) / mapHeight
+			coordsArea.x1 = mapInfoX1 + (-x) * xPixel
+			coordsArea.y1 = mapInfoY1 + (-y) * yPixel
 			coordsArea.x2 = coordsArea.x1 + maskWidth  * xPixel
 			coordsArea.y2 = coordsArea.y1 + maskHeight * yPixel
 			_fctUpdateElements()
@@ -452,13 +433,8 @@ local function _uiMap(name, parent)
 		local mouse = inspectMouse()
 		local relX = mouse.x - mask:GetLeft()
 		local relY = mouse.y - mask:GetTop()
-		-- Ensure mapInfo coordinates are numbers for mathematical operations
-		local mapX1 = tonumber(mapInfo.x1) or 0
-		local mapX2 = tonumber(mapInfo.x2) or 0
-		local mapY1 = tonumber(mapInfo.y1) or 0
-		local mapY2 = tonumber(mapInfo.y2) or 0
-		local pX = (cursorCoordX - mapX1) / (mapX2 - mapX1)
-		local pY = (cursorCoordY - mapY1) / (mapY2 - mapY1)
+		local pX = (cursorCoordX - mapInfoX1) / (mapInfoX2 - mapInfoX1)
+		local pY = (cursorCoordY - mapInfoY1) / (mapInfoY2 - mapInfoY1)
 		_fctPan(relX - pX * mapWidth, relY - pY * mapHeight)
 	end
 
@@ -548,9 +524,8 @@ local function _uiMap(name, parent)
 			_fctLoadBigMap()
 		end
 
-		-- Ensure mapInfo coordinates are numbers for mathematical operations
-		local mapX2 = tonumber(mapInfo.x2) or mapInfo.width
-		scale = mapX2 / mapInfo.width
+		_updateMapInfoCache()
+		scale = mapInfoX2 / mapInfo.width
 		maximizedScale = scale
 
 		x, y = nil, nil
@@ -572,23 +547,17 @@ local function _uiMap(name, parent)
 		if newCoordX ~= nil then coordX = newCoordX end
 		if newCoordY ~= nil then coordY = newCoordY end
 
-		-- Ensure mapInfo coordinates are numbers for mathematical operations
-		local mapX1 = tonumber(mapInfo.x1) or 0
-		local mapX2 = tonumber(mapInfo.x2) or 0
-		local mapY1 = tonumber(mapInfo.y1) or 0
-		local mapY2 = tonumber(mapInfo.y2) or 0
-		
-		if coordX == nil then coordX = (mapX2 - mapX1) / 2 end
-		if coordY == nil then coordY = (mapY2 - mapY1) / 2 end
+		if coordX == nil then coordX = (mapInfoX2 - mapInfoX1) / 2 end
+		if coordY == nil then coordY = (mapInfoY2 - mapInfoY1) / 2 end
 
-		if coordX < mapX1 then coordX = mapX1 end
-		if coordY < mapY1 then coordY = mapY1 end
+		if coordX < mapInfoX1 then coordX = mapInfoX1 end
+		if coordY < mapInfoY1 then coordY = mapInfoY1 end
 
 		coordLabel:SetText(stringFormat("%d / %d", coordX, coordY))
 		
 		--- calculate big map even if it is not shown as this is used to position the elements on the map
-		local pX = 1 / (mapX2 - mapX1) * (coordX - mapX1)
-		local pY = 1 / (mapY2 - mapY1) * (coordY - mapY1)
+		local pX = 1 / (mapInfoX2 - mapInfoX1) * (coordX - mapInfoX1)
+		local pY = 1 / (mapInfoY2 - mapInfoY1) * (coordY - mapInfoY1)
 
 		local newX = (maskWidth / 2) - (mapWidth * pX)
 		local newY = (maskHeight / 2) - (mapHeight * pY)
@@ -598,16 +567,11 @@ local function _uiMap(name, parent)
 		_fctPosition(newX, newY)
 		_fctUpdateTiles()
 
-		-- Ensure mapInfo coordinates are numbers for mathematical operations
-		local mapX1 = tonumber(mapInfo.x1) or 0
-		local mapX2 = tonumber(mapInfo.x2) or 0
-		local mapY1 = tonumber(mapInfo.y1) or 0
-		local mapY2 = tonumber(mapInfo.y2) or 0
-		
-		local xPixel = (mapX2 - mapX1) / mapWidth
-		local yPixel = (mapY2 - mapY1) / mapHeight
+		local xPixel = (mapInfoX2 - mapInfoX1) / mapWidth
+		local yPixel = (mapInfoY2 - mapInfoY1) / mapHeight
 
-		coordsArea = { x1 = mapX1 + (-x) * xPixel, y1 = mapY1 + (-y) * yPixel }
+		coordsArea.x1 = mapInfoX1 + (-x) * xPixel
+		coordsArea.y1 = mapInfoY1 + (-y) * yPixel
 		coordsArea.x2 = coordsArea.x1 + maskWidth  * xPixel
 		coordsArea.y2 = coordsArea.y1 + maskHeight * yPixel
 
@@ -735,16 +699,10 @@ local function _uiMap(name, parent)
 			
 			local cx1, cy1, cx2, cy2 = coordsArea.x1, coordsArea.y1, coordsArea.x2, coordsArea.y2
 			if mapInfo.x1 ~= nil then
-				-- Ensure mapInfo coordinates are numbers, not strings
-				local mapX1 = tonumber(mapInfo.x1) or cx1
-				local mapY1 = tonumber(mapInfo.y1) or cy1
-				local mapX2 = tonumber(mapInfo.x2) or cx2
-				local mapY2 = tonumber(mapInfo.y2) or cy2
-				
-				cx1 = math.max(cx1, mapX1)
-				cy1 = math.max(cy1, mapY1)
-				cx2 = math.min(cx2, mapX2)
-				cy2 = math.min(cy2, mapY2)
+				cx1 = math.max(cx1, mapInfoX1)
+				cy1 = math.max(cy1, mapInfoY1)
+				cx2 = math.min(cx2, mapInfoX2)
+				cy2 = math.min(cy2, mapInfoY2)
 			end
 			if coordY ~= 0
 			and coordX >= cx1 and coordX <= cx2
@@ -863,6 +821,7 @@ local function _uiMap(name, parent)
 	function ui:UpdateMapInfo(newMapInfo)
 	
 		mapInfo = newMapInfo
+		_updateMapInfoCache()
 		_fctRedraw()
 		
 	end
