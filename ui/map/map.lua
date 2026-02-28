@@ -272,8 +272,8 @@ local function _uiMap(name, parent)
 		local xP = 1 / mapWidth * diffX
 		local yP = 1 / mapHeight * diffY
 
-		cursorCoordX = mathFloor(((mapInfoX2 - mapInfoX1) * xP) + mapInfoX1)
-		cursorCoordY = mathFloor(((mapInfoY2 - mapInfoY1) * yP) + mapInfoY1)
+		cursorCoordX = mathFloor(((mapInfoX2 - mapInfoX1) * xP + mapInfoX1))
+		cursorCoordY = mathFloor(((mapInfoY2 - mapInfoY1) * yP + mapInfoY1))
 
 		if cursorCoordX == _lastCursorCoordX and cursorCoordY == _lastCursorCoordY then
 			if nkDebug then nkDebug.traceEnd (inspectAddonCurrent(), "_fctUpdateCoord", debugId) end
@@ -361,7 +361,8 @@ local function _uiMap(name, parent)
 
 		mapTiles[midY][midX].map:SetPoint("CENTER", mask, "CENTER", shiftX, shiftY)
 
-		-- Always update tiles when called, as panning can reveal new tiles even on the same base tile
+		-- Only re-texture tiles when the base tile actually changed
+		local tileBaseChanged = (tileX ~= lastTileX or tileY ~= lastTileY)
 		lastTileX = tileX
 		lastTileY = tileY
 
@@ -373,37 +374,82 @@ local function _uiMap(name, parent)
 		local minRow = mathMax(1,        mathFloor(midY - cTop  / tileSize))
 		local maxRow = math.min(tileRows, math.ceil(midY + (maskHeight - cTop)  / tileSize) - 1)
 
+		if not tileBaseChanged then
+			-- Base tile hasn't changed — no textures to swap, just update
+			-- visibility for tiles entering/leaving the visible range.
+			for row = 1, tileRows do
+				for col = 1, tileCols do
+					local wx = tileX + (col - midX) * 256
+					local wy = tileY + (row - midY) * 256
+					local shouldShow = row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
+						and wx >= mapInfoX1 and wx < mapInfoX2
+						and wy >= mapInfoY1 and wy < mapInfoY2
+					local thisTile = mapTiles[row][col]
+					if shouldShow and not thisTile.visible then
+						thisTile.map:SetVisible(true)
+						thisTile.visible = true
+					elseif not shouldShow and thisTile.visible then
+						thisTile.map:SetVisible(false)
+						thisTile.visible = false
+					end
+				end
+			end
+			return
+		end
+
+		-- Base tile changed — update textures. Preload one ring beyond
+		-- the visible range so edge tiles are cached before they scroll in.
+		local preMinCol = mathMax(1,        minCol - 1)
+		local preMaxCol = math.min(tileCols, maxCol + 1)
+		local preMinRow = mathMax(1,        minRow - 1)
+		local preMaxRow = math.min(tileRows, maxRow + 1)
+
 		for row = 1, tileRows do
 			for col = 1, tileCols do
 				local wx = tileX + (col - midX) * 256
 				local wy = tileY + (row - midY) * 256
-				if row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
-				and wx >= mapInfoX1 and wx < mapInfoX2
-				and wy >= mapInfoY1 and wy < mapInfoY2 then
+
+				local inVisible = row >= minRow and row <= maxRow and col >= minCol and col <= maxCol
+					and wx >= mapInfoX1 and wx < mapInfoX2
+					and wy >= mapInfoY1 and wy < mapInfoY2
+				local inPreload = row >= preMinRow and row <= preMaxRow and col >= preMinCol and col <= preMaxCol
+					and wx >= mapInfoX1 and wx < mapInfoX2
+					and wy >= mapInfoY1 and wy < mapInfoY2
+
+				if inVisible then
 					local thisTile = mapTiles[row][col]
 
-					if not thisTile.visible then 
-						thisTile.map:SetVisible(true) 
-						mapTiles[row][col].visible = true
+					if not thisTile.visible then
+						thisTile.map:SetVisible(true)
+						thisTile.visible = true
 					end
 
 					local textureName = stringFormat(mapInfo.path, wx, wy)
 					if thisTile.texture ~= textureName then
 						thisTile.map:SetTextureAsync("Rift", textureName)
-						mapTiles[row][col].texture = textureName
+						thisTile.texture = textureName
+					end
+				elseif inPreload then
+					local thisTile = mapTiles[row][col]
+
+					if thisTile.visible then
+						thisTile.map:SetVisible(false)
+						thisTile.visible = false
 					end
 
-					--print ("set", mapTiles[row][col].visible, mapTiles[row][col].texture)
+					local textureName = stringFormat(mapInfo.path, wx, wy)
+					if thisTile.texture ~= textureName then
+						thisTile.map:SetTextureAsync("Rift", textureName)
+						thisTile.texture = textureName
+					end
 				else
 					local thisTile = mapTiles[row][col]
 
 					if thisTile.visible then
 						thisTile.map:SetVisible(false)
-						mapTiles[row][col].visible = false
+						thisTile.visible = false
 					end
-
-					--print ("no set", mapTiles[row][col].visible, mapTiles[row][col].texture)
-				end				
+				end
 			end
 		end
 
