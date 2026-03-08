@@ -478,6 +478,8 @@ local function _uiMap(name, parent)
 
 	local function _fctProcessWayPoint ()
 
+		if cursorCoordX == nil or cursorCoordY == nil then return end
+
 		if waypoint ~= nil then
 
 			if cursorCoordX >= (waypoint.x - 5) and cursorCoordX <= (waypoint.x + 5) and cursorCoordY >= (waypoint.y -5 ) and cursorCoordY <= (waypoint.y +5) then
