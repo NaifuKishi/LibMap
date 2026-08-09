@@ -124,9 +124,13 @@ local function _uiMap(name, parent)
 		local rows = {}
 
 		for idx2 = 1, tileCols, 1 do
-			local thisMap = LibEKL.UICreateFrame("nkTexture", stringFormat("%s.map.%dx%d", name, idx1, idx2), mask)			
+			local thisMap = LibEKL.UICreateFrame("nkTexture", stringFormat("%s.map.%dx%d", name, idx1, idx2), mask)
 			thisMap:SetLayer(1)
 			thisMap:SetMouseMasking("limited")
+			-- Frames start visible; the update logic only toggles on flag
+			-- *changes*, so a tile born visible with visible=false would render
+			-- forever. Start hidden to keep flag and state in sync.
+			thisMap:SetVisible(false)
 			table.insert(rows, { map = thisMap, texture = "", visible = false} )
 		end
 
