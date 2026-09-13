@@ -57,9 +57,14 @@ local function _fctCheckForColossus (values)
     end 
   end
  
+  -- Die Sprache aendert sich waehrend der Schleife nicht, _mapColossus hat aber
+  -- 961 Eintraege - und die Funktion laeuft je Karteneintrag vom Typ
+  -- RIFT.INVASION. Im Rumpf abgefragt hat das den Watchdog ausgeloest.
+  local shortLanguage = LibMapGetLanguageShort()
+
   for k, v in pairs (_mapColossus) do
     
-    local name = v[LibMapGetLanguageShort()]
+    local name = v[shortLanguage]
     
     if values.name == name then
       local plane = stringMatch (values.type, "RIFT.INVASION.(.+)")

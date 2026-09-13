@@ -17,6 +17,7 @@ local InspectSystemSecure	= Inspect.System.Secure
 local InspectTimeReal		= Inspect.Time.Real
 
 local stringFormat			= string.format
+local tableRemove			= table.remove
 
 ---------- init local variables ---------
 
@@ -176,7 +177,7 @@ function internal.processPerformanceQueue()
 	if InspectSystemWatchdog() < 0.1 then return end
 		
 	data.perfQueue[1]()
-	tableRemove(data.perfQueue, 1, 1)
+	tableRemove(data.perfQueue, 1)
 	
 	
 end
