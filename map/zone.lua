@@ -31,7 +31,10 @@ local _zoneMapping= {
   world3 = {"z0000012D6EEBB377", "z0000012E087E78E1", "z0000012F14279B5A", "z196650F5AA524928"},
   world4 = {"z6FEC49CAE466B014", "z5AA06689CCBB9285", "z7B2B0BB6E3EA1BEC", "z480CCFE1F3A277E9", "z77AC247EDB5F0186", "z2EF8C4A4103B159A", "z1E81B494CFA05AD0"},
   
-  terminus		= {"z00EC7E88D7CC9977"},
+  -- Zwei Zonen: die Weltzone und die Tutorialzone, die denselben Namen traegt.
+  -- Ohne die zweite liefert getZoneWorld nil, mapData.currentWorld wird
+  -- "unknown" und nkUI zeigt die Standardkarte statt Terminus.
+  terminus		= {"z00EC7E88D7CC9977", "z0000000110910A55"},
   mathosia		= {"z0000000F382A777C"},
   planetouchedw = {"z0000001CE3FE8B2C"},    
   
@@ -196,6 +199,9 @@ local _zoneList= {
 ,['z76C88A5A51A38D90']={DE='Glutinsel', EN='Ember Isle', FR='Île de Braise', type='world', map='world1'}
 ,['z6D63DC5B332895AC']={DE='Chronik: Seelenfluss', EN='Chronicle: River of Souls', FR='Chronique : Fleuve des Âmes', type='instance', map='riverofsouls'}
 ,['z00EC7E88D7CC9977']={DE='Terminus', EN='Terminus', FR='Terminus', type='world', map='terminus'}
+,['z0000000110910A55']={DE='Terminus', EN='Terminus', FR='Terminus', type='world', map='terminus'}   -- Tutorialzone, im Spiel ebenfalls "Terminus". 'type' wird derzeit nirgends
+                                                                                         -- ausgewertet; auf 'world' gesetzt wie der Geschwistereintrag, ob es technisch
+                                                                                         -- eine Instanz ist, ist nicht geprueft.
 ,['z0000000F382A777C']={DE='Mathosia', EN='Mathosia', FR='Mathosia', type='world', map='mathosia'}
 ,['z40E934612B00D95C']={DE='Sharax', EN='Mount Sharax', FR='Mont Sharax', type='instance', map='mountsharax'}
 ,['z3DBE218325519634']={DE='See des Trostes', EN='Lake of Solace', FR='Lac de la Consolation', type='world', map='world1'}
